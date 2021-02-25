@@ -14,13 +14,13 @@ def front():
     return render_template('front.html')
 
 
-@app.route('/login',methods=['GET','POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == "POST":
         df = pd.read_csv('user.csv')
         user = request.form.get("uname")
         password = request.form.get("psw")
-        if df[df['User']==user]['Pass'].values==password:
+        if df[df['User'] == user]['Pass'].values == password:
             flash(f'you are logged in {user}')
             return redirect(url_for('front'))
         else:
@@ -29,7 +29,7 @@ def login():
     return render_template('login.html')
 
 
-@app.route('/register',methods=['POST','GET'])
+@app.route('/register', methods=['POST', 'GET'])
 def register():
     if request.method == "POST":
         df = pd.read_csv('user.csv')
