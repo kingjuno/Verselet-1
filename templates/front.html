@@ -4,83 +4,15 @@
 {% block content %}
 
 <style>
-
-  @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap');
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@700&display=swap');
-  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100&display=swap');
-
   body{
     background-image: url({{ url_for('static', filename='bg.png') }});
     background-size: cover;
   }
-
-  .auth_button {
-    color: white;
-    background-color: #24252a;
-    padding: 15px 30px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    border-radius: 8px;
-    font-family: 'Open Sans', sans-serif;
-    margin-left: 5%;
-    margin-right: 5%;
-
-}
-
-  a, a:link, a:visited {
-      color: white;
-      text-decoration: none;
-    }
-
-  .auth_button:hover {
-    background-color: #4B4B4B;
-    cursor: pointer;
-    color: #C0BDBD;
-  }
-
-  .big_text {
-    margin: 3%;
-    color: white;
-    text-decoration: none;
-    font-family: 'Noto Sans', sans-serif;
-    font-size: 50px;
-  }
-
-  .small_text {
-    margin: 3%;
-    color: #D1D1D1;
-    text-decoration: none;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 15px;
-  }
-
 </style>
 
 <h1>{% with messages = get_flashed_messages(with_categories=True) %}
       {% for category, message in messages %}
         <div class="flash {{category}}">{{message}}</div>
       {% endfor %}
-    {% endwith%}
-</h1>
-
-<div style="margin-left: 80%;">
-    <div class="auth_button"><a href="/login"><b>Sign In</b></a></div>
-    <div class="auth_button"><a href="/register"><b>Sign Up</b></a></div>
-</div>
-
-<div class="big_text">
-    This is a place to compete.<br>
-    This is a place to learn.<br>
-    This is <span style="color: #A44AA4; font-size: 70px;">V</span>erselet
-</div>
-
-<div class="small_text">
-    Compete with friends to solve programming algorithms in multiple different modes.<br>
-    Learn from mistakes and get better every question you solve.<br>
-    Improve your skills in one of many coding languages and improve your problem solving skills.
-</div>
-
+  {% endwith%}</h1>
 {% endblock %}
