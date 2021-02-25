@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, get_flashed_messages
 import pandas as pd
+from ExtraStuff import encoder,decoder
 app = Flask(__name__)
 app.secret_key = 'hi'
 
@@ -20,7 +21,7 @@ def login():
         df = pd.read_csv('user.csv')
         user = request.form.get("uname")
         password = request.form.get("psw")
-        if df[df['User'] == user]['Pass'].values == password:
+        if decoder(df[df['User'] == user]['Pass'].values[0]) == password:
             flash(f'you are logged in {user}')
             return redirect(url_for('front'))
         else:
@@ -35,7 +36,7 @@ def register():
         df = pd.read_csv('user.csv')
         email = request.form.get('email')
         user = request.form.get("uname")
-        password = request.form.get("psw")
+        password = encoder(request.form.get("psw"))
         if user in df.User.values:
             flash(f'Username {user} is already took')
             return redirect(url_for('register'))
