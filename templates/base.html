@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title%} {% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
+</head>
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.topnav {
+  overflow: absolute;
+  background-color: #0077FF;
+}
+
+.topnav a {
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 15px 20px;
+  text-decoration: none;
+  font-size: 17px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.topnav a:hover {
+  color: black;
+  cursor: pointer;
+}
+
+.dropbtn {
+  background-color: #0077FF;
+  color: white;
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  margin-left: -50%;
+  display: none;
+  position: absolute;
+  background-color: #CCDDEF;
+  z-index: 999;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 15px 25px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown:hover .dropbtn {
+  color: black;
+}
+
+.yellowribbon {
+  width: 100%;
+  height: 5px;
+  background-color: #FFF700;
+  color: #FFF700;
+}
+
+</style>
+
+<div class="topnav">
+    <a style="margin-right: 25%"><b>Verselet</b></a>
+    <a style="margin-right: 25%" href=""><b>Home</b></a>
+    <a style="margin-right: 29%" href=""><b>Profile</b></a>
+    <div style="margin-top: -0.5%;" class="dropdown">
+        <button style="font-size: 150%;" class="dropbtn"><b>☰</b></button>
+        <div class="dropdown-content">
+            <a href="#">Settings</a>
+            <a href="#">About Us</a>
+            <a href="#">Contact Us</a>
+        </div>
+    </div>
+</div>
+<div class="yellowribbon"></div>
+
+<body>
+{% block content %}
+
+{% endblock %}
+</body>
+</html>
+
+

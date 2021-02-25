@@ -1,25 +1,25 @@
-# Good luck team !!
-
-from flask import Flask
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
+class User:
+    def __init__(self, id, username, password):
+        self.id = id
+        self.username = username
+        self.password = password
+
+
+users = []
+users.append(User(id=1, username='arsh', password='pass'))
+users.append(User(id=2, username='john', password='pass2'))
 
 @app.route('/')
 def index():
-    return '''
-    <style>
-        h1 {
-      background-color: #d5f4e6;
-    }
-    h2 {
-      background-color: #d5f4e6;
-    }
-    </style>
-    <font face = "Arial" size =" 5" color="black"><b><h1 align="center">Hello SyntaEXE Team !</h1><b></font>
-    <font face = "Arial" color="black"><h2>Good luck team and remember, the members in the server are always ready to help !</h2></font>
-    '''
+    return render_template('base.html')
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    return render_template('login.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
