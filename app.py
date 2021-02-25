@@ -13,7 +13,9 @@ def index():
       background-color: #d5f4e6;
     }
     </style>
-    <font face = "Lucida Calligraphy" size =" 5" color="orange"><b><h1 align="center">Hello SyntaEXE Team</h1><b></font>'''
+    <font face = "Lucida Calligraphy" size =" 5" color="orange"><b><h1 align="center">Hello SyntaEXE Team !</h1><b></font>
+    <p1>Good luck team and remember, the members in the server are always ready to help !</p1>
+    '''
 
 
 if __name__ == '__main__':
