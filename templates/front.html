@@ -8,10 +8,14 @@
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@700&display=swap');
   @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100&display=swap');
 
-  body {
+    body {
     background-image: url({{ url_for('static', filename='bg.png')}});
     background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
   }
+  
 
   .auth_button {
     color: white;
@@ -45,9 +49,10 @@
   .big_text {
     margin: 3%;
     color: white;
+    padding: 10px;
     text-decoration: none;
     font-family: 'Noto Sans', sans-serif;
-    font-size: 50px;
+    font-size: 65px;
   }
 
   .small_text {
@@ -83,14 +88,6 @@
     background-color: #4B4B4B;
     cursor: pointer;
     color: #C0BDBD;
-  }
-
-  .big_text {
-    margin: 3%;
-    color: white;
-    text-decoration: none;
-    font-family: 'Noto Sans', sans-serif;
-    font-size: 50px;
   }
 
   .small_text {
