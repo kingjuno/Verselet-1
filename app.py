@@ -1,18 +1,13 @@
-from flask import Flask, render_template, request,redirect,url_for,flash,get_flashed_messages
+from flask import Flask, render_template, request, redirect, url_for, flash, get_flashed_messages
 import pandas as pd
 app = Flask(__name__)
-app.secret_key='hi'
+app.secret_key = 'hi'
+
 class User:
     def __init__(self, id, username, password):
         self.id = id
         self.username = username
         self.password = password
-
-
-users = []
-users.append(User(id=1, username='arsh', password='pass'))
-users.append(User(id=2, username='john', password='pass2'))
-
 
 @app.route('/')
 def front():
