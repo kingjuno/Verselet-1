@@ -2,7 +2,10 @@
 {% block title %}Verselet{% endblock %}
 
 {% block content %}
-
-E
+<h1>{% with messages = get_flashed_messages(with_categories=True) %}
+      {% for category, message in messages %}
+        <div class="flash {{category}}">{{message}}</div>
+      {% endfor %}
+  {% endwith%}</h1>
 
 {% endblock %}
