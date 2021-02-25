@@ -28,8 +28,8 @@ def login():
         if df[df['User']==user]['Pass'].values==password:
             return redirect(url_for('front'))
         else:
-            print('wrong')
-            return redirect(url_for('front'))
+            flash('wrong username password')
+            return redirect(url_for('login'))
     return render_template('login.html')
 
 
