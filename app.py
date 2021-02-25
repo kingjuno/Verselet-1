@@ -26,6 +26,7 @@ def login():
         user = request.form.get("uname")
         password = request.form.get("psw")
         if df[df['User']==user]['Pass'].values==password:
+            flash(f'you are logged in {user}')
             return redirect(url_for('front'))
         else:
             flash('wrong username password')
