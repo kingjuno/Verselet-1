@@ -13,13 +13,16 @@ users = []
 users.append(User(id=1, username='arsh', password='pass'))
 users.append(User(id=2, username='john', password='pass2'))
 
+
 @app.route('/')
-def index():
-    return render_template('base.html')
+def front():
+    return render_template('front.html')
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     return render_template('login.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)

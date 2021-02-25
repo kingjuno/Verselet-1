@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title%} {% endblock %}</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
 </head>
 <style>
 
@@ -11,6 +10,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
 
 body {
+  overflow: hidden;
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
 }
@@ -83,13 +83,66 @@ body {
   color: #FFF700;
 }
 
+input[type=text], input[type=password] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+.cancelbtn {
+  width: auto;
+  padding: 10px 18px;
+  background-color: #f44336;
+}
+
+.container {
+  padding: 16px;
+  margin: auto;
+  margin-top: 10%;
+  width: 50%;
+  border: 3px solid orange;
+  padding: 10px;
+}
+
+span.psw {
+  float: right;
+  padding-top: 16px;
+}
+
+@media screen and (max-width: 300px) {
+  span.psw {
+     display: block;
+     float: none;
+  }
+  .cancelbtn {
+     width: 100%;
+  }
+}
+
 </style>
 
 <div class="topnav">
     <a style="margin-right: 25%"><b>Verselet</b></a>
-    <a style="margin-right: 25%" href=""><b>Home</b></a>
+    <a style="margin-right: 25%" href="\"><b>Home</b></a>
     <a style="margin-right: 29%" href=""><b>Profile</b></a>
-    <div style="margin-top: -0.5%;" class="dropdown">
+    <div style="margin-top: -0.75%;" class="dropdown">
         <button style="font-size: 150%;" class="dropbtn"><b>☰</b></button>
         <div class="dropdown-content">
             <a href="#">Settings</a>
