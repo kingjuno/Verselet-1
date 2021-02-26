@@ -97,17 +97,9 @@
     font-family: 'Montserrat', sans-serif;
     font-size: 15px;
   }
-
 </style>
 
-<h1>{% with messages = get_flashed_messages(with_categories=True) %}
-  {% for category, message in messages %}
-  <div class="flash {{category}}">{{message}}</div>
-  {% endfor %}
-  {% endwith%}
-</h1>
-
-<div style="margin-left: 80%;">
+<div style="margin-left: 80%; margin-top: 2%;">
   <div class="auth_button"><a href="/login"><b>Sign In</b></a></div>
   <div class="auth_button"><a href="/register"><b>Sign Up</b></a></div>
 </div>
@@ -115,13 +107,13 @@
 <div class="big_text">
   This is a place to compete.<br>
   This is a place to learn.<br>
-  This is <span style="color: #A44AA4; font-size: 70px;">V</span>erselet
+  This is <span style="color: #A44AA4; font-size: 70px;">V</span>erselet.
 </div>
 
 <div class="small_text">
   Compete with friends to solve programming algorithms in multiple different modes.<br>
   Learn from mistakes and get better every question you solve.<br>
-  Improve your skills in one of many coding languages and improve your problem solving skills.
+  Improve your skills in one of many coding languages and refine your problem solving skills.
 </div>
 
 {% endblock %}

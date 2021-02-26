@@ -26,16 +26,16 @@ def front():
         return render_template('front.html')
 
 
-@app.route('/login',methods=['GET', 'POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == "POST":
         df = pd.read_csv('user.csv')
         user = request.form.get("uname")
         password = request.form.get("psw")
         if df[df['User'] == user]['Pass'].values == password:
-            flash(f'you are logged in {user}')
+            flash(f'Welcome, {user}')
             session['user'] = user
-            return redirect(url_for('front'))
+            return redirect(url_for('user_profile'))
         else:
             flash('Incorrect username or password')
             return redirect(url_for('login'))
@@ -57,6 +57,11 @@ def register():
             df.to_csv('user.csv', index=False)
             return redirect(url_for('front'))
     return render_template('register.html')
+
+
+@app.route('/profile')
+def user_profile():
+    return render_template('profile.html')
 
 
 if __name__ == '__main__':

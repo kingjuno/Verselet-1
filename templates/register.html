@@ -4,7 +4,6 @@
 {% block content %}
 
 <style>
-
   @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300&display=swap');
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200&display=swap');
   @import url('https://fonts.googleapis.com/css2?family=PT+Sans&display=swap');
@@ -14,9 +13,8 @@
     background-image: url({{ url_for('static', filename='bg.png') }});
     background-size: cover;
   }
-
-
 </style>
+
 <h1>{% with messages = get_flashed_messages(with_categories=True) %}
       {% for category, message in messages %}
         <div class="flash {{category}}">{{message}}</div>

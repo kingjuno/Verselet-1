@@ -18,13 +18,20 @@
     <nav>
         <ul class="nav__links">
             <li><a href="\">Home</a></li>
-            <li><a href="\">Profile</a></li>
+            <li><a href="/profile">Profile</a></li>
             <li><a href="\">About</a></li>
         </ul>
     </nav>
   
     <a class="cta">
-        <div style="margin-top: -0.75%;" class="dropdown">
+        <div style="padding: 0px 10px; margin-left: 100%; color: white; display:inline;">
+            {% with messages = get_flashed_messages(with_categories=True) %}
+                {% for category, message in messages %}
+                    <div class="flash {{category}}">{{message}}</div>
+                {% endfor %}
+            {% endwith%}
+        </div>
+        <div style="padding-top: -0.8%; margin-left: -30%;" class="dropdown">
         <button class="dropbtn"><b>☰</b></button>
         <div class="dropdown-content">
             <a href="\">Settings</a>
