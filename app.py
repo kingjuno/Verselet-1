@@ -32,13 +32,18 @@ def login():
         user = request.form.get("uname")
 
         password = request.form.get("psw")
-        if df[df['User'] == user]['Pass'].values[0] == encoder(password):
-            session['user'] = user
-            flash(f'Welcome, {user}')
-            return redirect(url_for('user_profile'))
-        else:
-            redirect(url_for('login'))
-            flash('Incorrect username or password')
+        try:
+            if df[df['User'] == user]['Pass'].values[0] == encoder(password):
+                session['user'] = user
+                flash(f'Welcome, {user}')
+                return redirect(url_for('user_profile'))
+            else:
+                flash('Incorrect username or password')
+                redirect(url_for('login'))
+
+        except:
+            flash("User doesn't Exist")
+            redirect(url_for('register'))
     return render_template('login.html')
 
 
