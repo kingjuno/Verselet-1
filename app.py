@@ -36,6 +36,7 @@ def login():
         password = request.form.get("psw")
         if df[df['User'] == user]['Pass'].values[0] == encoder(password):
             session['user'] = user
+            flash(f'Welcome, {user}')
             return redirect(url_for('user_profile'))
         else:
             flash('Incorrect username or password')
@@ -57,7 +58,7 @@ def register():
             df2=pd.read_csv('db.csv')
             df = df.append({'User': user, 'Pass': password, 'Email': email, 'Id': len(df) + 1}, ignore_index=True)
             df2 = df2.append({'Wins': 0, 'Games': 0, 'Avr. Time': 0, 'Username': user}, ignore_index=True)
-            df2.to_csv('db.csv',index=False)
+            df2.to_csv('db.csv', index=False)
             df.to_csv('user.csv', index=False)
             return redirect(url_for('front'))
     return render_template('register.html')
