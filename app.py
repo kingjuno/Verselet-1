@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 import pandas as pd
 from ExtraStuff import decoder,encoder
 app = Flask(__name__)
-# u need a much stronger secret key so here it is
+# u need a much stronger secret key so here it is # thanks - Arsh
 app.secret_key = 'ec52e5ead3899e4a0717b9806e1125de8af3bad84ca7f511'
 
 class User:
@@ -11,12 +11,6 @@ class User:
         self.username = username
         self.password = password
 
-@app.route('/')
-def front():
-    if 'user' in session:
-        return render_template('front.html', name=session['user'])
-    else:
-        return render_template('front.html')
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -24,18 +18,26 @@ def page_not_found(e):
     return render_template('404.html'), 404
 
 
-@app.route('/login',methods=['GET','POST'])
+@app.route('/')
+def front():
+    if 'user' in session:
+        return render_template('front.html', name=session['user'])
+    else:
+        return render_template('front.html')
+
+
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == "POST":
         df = pd.read_csv('user.csv')
         user = request.form.get("uname")
         password = request.form.get("psw")
         if decoder(df[df['User'] == user]['Pass'].values[0]) == password:
-            flash(f'you are logged in {user}')
+            flash(f'Welcome, {user}')
             session['user'] = user
-            return redirect(url_for('front'))
+            return redirect(url_for('user_profile'))
         else:
-            flash('wrong username password')
+            flash('Incorrect username or password')
             return redirect(url_for('login'))
     return render_template('login.html')
 
@@ -57,6 +59,10 @@ def register():
     return render_template('register.html')
 
 
+@app.route('/profile')
+def user_profile():
+    return render_template('profile.html')
+
+
 if __name__ == '__main__':
     app.run(debug=True)
-
