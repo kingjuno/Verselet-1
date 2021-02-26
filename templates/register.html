@@ -13,6 +13,18 @@
     background-image: url({{ url_for('static', filename='dot_blue.gif')}});
     background-size: cover;
   }
+
+  @media screen and (min-width: 500px) {
+   body {
+      width:420px;
+   }
+}
+
+@media screen and (min-width: 800px) {
+   body {
+      width:720px;
+   }
+}
 </style>
 
 <h1>{% with messages = get_flashed_messages(with_categories=True) %}
