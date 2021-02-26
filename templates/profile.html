@@ -33,9 +33,19 @@
   }
 
 </style>
-<div style="color: white;">
-    <div class="big_text">Your <span style="color: #A44AA4;">P</span>rofile</div>
-    <div class="stat_t"><span style="color: #A44AA4;">U</span>sername : <span style="font-family: 'Oxygen', sans-serif;">{{ u }}</span></div>
-    <div class="stat_t"><span style="color: #A44AA4;">E</span>mail address : <span style="font-family: 'Oxygen', sans-serif;">{{ e }}</span></div>
+<div class="row">
+
+    <div class="column" style="color: white;">
+        <div class="big_text">Your <span style="color: #A44AA4;">P</span>rofile</div>
+        <div class="stat_t"><span style="color: #A44AA4;">U</span>sername : <span style="font-family: 'Oxygen', sans-serif;">{{ u }}</span></div>
+        <div class="stat_t"><span style="color: #A44AA4;">E</span>mail address : <span style="font-family: 'Oxygen', sans-serif;">{{ e }}</span></div>
+    </div>
+
+    <div class="column" style="color: white; margin-left: 50%; margin-top: -15.57%;">
+        <div class="big_text">Your <span style="color: #A44AA4;">S</span>tats</div>
+        <div class="stat_t"><span style="color: #A44AA4;">G</span>ames Played : <span style="font-family: 'Oxygen', sans-serif;">{{ g }}</span></div>
+        <div class="stat_t"><span style="color: #A44AA4;">W</span>ins : <span style="font-family: 'Oxygen', sans-serif;">{{ w }}</span></div>
+    </div>
+
 </div>
 {% endblock %}
