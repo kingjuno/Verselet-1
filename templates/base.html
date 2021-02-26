@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{{ url_for('static' , filename='base.css')}}">
 </head>
 <style>
+
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap');
@@ -15,6 +16,7 @@
 .dropdown {
   position: relative;
   display: inline-block;
+  background-color: #1d1d1d;
 }
 
 .dropdown-content {
@@ -48,8 +50,8 @@
 
 </style>
 
-<header>
-    <a class="logo" href="/"><img src="static/logo_v.png" alt="logo"></a>
+<header style="background-color: #1d1d1d;">
+    <a class="logo" href="/"><img src="static/verse_l.png" alt="logo"></a>
     <nav>
         <ul class="nav__links">
             <li><a href="\">Home</a></li>
@@ -67,7 +69,7 @@
             {% endwith%}
         </div>
         <div style="padding-top: -0.8%; margin-left: -30%;" class="dropdown">
-        <button class="dropbtn"><b>☰</b></button>
+        <button class="dropbtn" style="background-color: #1d1d1d;"><b>☰</b></button>
         <div style="font-family: 'Quicksand', sans-serif;" class="dropdown-content">
             <a href="\">Settings</a>
             <a href="\">About Us</a>
