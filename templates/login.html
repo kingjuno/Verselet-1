@@ -25,11 +25,13 @@
   <label for="psw"><b>Password</b></label>
   <input type="password" placeholder="Enter Password" name="psw" required>
 
-  <h1>{% with messages = get_flashed_messages(with_categories=True) %}
+  <h1>
+    {% with messages = get_flashed_messages(with_categories=True) %}
       {% for category, message in messages %}
         <div style="font-family: 'Roboto Mono', monospace; font-size: 17px; color: #CA0000" class="flash {{category}}">{{message}}</div>
       {% endfor %}
-  {% endwith%}</h1>
+  {% endwith%}
+  </h1>
 
   <button style="font-size: 17px; font-family: 'Work Sans', sans-serif;" type="submit">Login</button>
   </form>

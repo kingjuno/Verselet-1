@@ -37,8 +37,8 @@ def login():
             flash(f'Welcome, {user}')
             return redirect(url_for('user_profile'))
         else:
+            redirect(url_for('login'))
             flash('Incorrect username or password')
-            return redirect(url_for('login'))
     return render_template('login.html')
 
 
@@ -67,12 +67,16 @@ def register():
 @app.route('/profile')
 def user_profile():
     try:
-        df2 = pd.read_csv('db.csv')
-        wins = df2[df2['Username'] == session['user']]['Wins'].values[0]
-        games = df2[df2['Username'] == session['user']]['Games'].values[0]
-        return render_template('profile.html', w=wins, g=games, u=session['user'])
+        df2 = pd.read_csv('db.csv'); udb = pd.read_csv('User.csv')
+        wins = df2[df2['Username'] == session['user']]['Wins'].values[0];e_mail = ''
+        games = df2[df2['Username'] == session['user']]['Games'].values[0]; inx = 0
+        for i in udb['User']:
+            if udb['User'].values[inx] == session['user']:
+                e_mail = udb['Email'][inx]
+            else:
+                inx += 1
+        return render_template('profile.html', w=wins, g=games, u=session['user'], e=e_mail)
     except:
-       flash('Login First')
        return redirect(url_for('login'))
 
 
