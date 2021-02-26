@@ -77,7 +77,19 @@ def user_profile():
                 inx += 1
         return render_template('profile.html', w=wins, g=games, u=session['user'], e=e_mail)
     except:
-       return redirect(url_for('login'))
+        flash("Please login or create an account first")
+        return redirect(url_for('login'))
+
+
+@login_manager.user_loader
+@app.route('/settings')
+def settings_page():
+    if 'user' in session:
+        flash("Please login or create an account first")
+        return render_template('settingspage.html')
+    else:
+        return render_template('login.html')
+
 
 
 if __name__ == '__main__':
