@@ -45,16 +45,6 @@ header {
   color: #7655FA;
 }
 
-.cta {
-  padding: 9px 25px;
-  border: none;
-  cursor: pointer;
-}
-
-.menu {
-  display: none;
-}
-
 .overlay {
   height: 100%;
   width: 0;
@@ -112,16 +102,6 @@ header {
   .menu {
     display: initial;
   }
-}
-
-
-.dropbtn {
-  background-color: #1d1d1d;
-  color: white;
-  padding: 16px;
-  font-size: 16px;
-  border: none;
-  cursor: pointer;
 }
 
 
