@@ -10,6 +10,41 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap');
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  margin-left: -50%;
+  display: none;
+  position: absolute;
+  background-color: #575454;
+  z-index: 999;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 15px 25px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {
+  transition: color 0.3s ease 0s;
+  background-color: #B5B5B5;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown:hover .dropbtn {
+  transition: color 0.3s ease 0s;
+  color: #7655FA;
+}
 
 </style>
 
@@ -33,7 +68,7 @@
         </div>
         <div style="padding-top: -0.8%; margin-left: -30%;" class="dropdown">
         <button class="dropbtn"><b>☰</b></button>
-        <div class="dropdown-content">
+        <div style="font-family: 'Quicksand', sans-serif;" class="dropdown-content">
             <a href="\">Settings</a>
             <a href="\">About Us</a>
             <a href="\">Contact Us</a>

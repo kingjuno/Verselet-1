@@ -84,12 +84,6 @@ header {
   display: block;
   transition: color 0.3s ease 0s;
 }
-
-.overlay a:hover,
-.overlay a:focus {
-  color: #0088a9;
-}
-
 .overlay .close {
   position: absolute;
   top: 20px;
@@ -129,37 +123,6 @@ header {
   cursor: pointer;
 }
 
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-
-.dropdown-content {
-  margin-left: -50%;
-  display: none;
-  position: absolute;
-  background-color: #575454;
-  z-index: 999;
-}
-
-.dropdown-content a {
-  color: black;
-  padding: 15px 25px;
-  text-decoration: none;
-  display: block;
-}
-
-.dropdown-content a:hover {
-    background-color: #302F2F
-}
-
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
-.dropdown:hover .dropbtn {
-  color: #7655FA;
-}
 
 .pribbon {
   width: 100%;
