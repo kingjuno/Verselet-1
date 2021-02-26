@@ -4,19 +4,37 @@
 {% block content %}
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300&display=swap');
-  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200&display=swap');
-  @import url('https://fonts.googleapis.com/css2?family=PT+Sans&display=swap');
-  @import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@300&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Fira+Sans:wght@500&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Oxygen:wght@300&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap');
 
   body{
     background-image: url({{ url_for('static', filename='dots.gif')}});
     background-size: cover;
   }
+
+  .big_text {
+    margin: 3%;
+    color: white;
+    padding: 10px;
+    text-decoration: none;
+    font-family: 'Fira Sans', sans-serif;
+    font-size: 65px;
+  }
+
+  .stat_t {
+    margin-left: 3%;
+    margin-bottom: 1%;
+    color: white;
+    padding: 10px;
+    text-decoration: none;
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 25px;
+  }
+
 </style>
-<font color="orange">
-<p>Your Profile</p>
-<p>Wins :{{ g }}</p>
-<p>Games :{{ w }}</p>
-</font>
+<div style="color: white;">
+    <div class="big_text">Your <span style="color: #A44AA4;">P</span>rofile</div>
+    <span class="stat_t"><span style="color: #A44AA4;">U</span>sername : <span style="font-family: 'Oxygen', sans-serif;">{{ u }}</span>
+</div>
 {% endblock %}

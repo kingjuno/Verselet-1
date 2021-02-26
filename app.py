@@ -1,31 +1,29 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask_login import LoginManager, current_user, UserMixin
 import pandas as pd
 from ExtraStuff import decoder, encoder
+
 app = Flask(__name__)
 
+login_manager = LoginManager()
 app.secret_key = 'ec52e5ead3899e4a0717b9806e1125de8af3bad84ca7f511'
-
-class User:
-    def __init__(self, id, username, password):
-        self.id = id
-        self.username = username
-        self.password = password
-
+login_manager.init_app(app)
 
 @app.errorhandler(404)
 def page_not_found(e):
-    # note that we set the 404 status explicitly
     return render_template('404.html'), 404
 
 
+@login_manager.user_loader
 @app.route('/')
 def front():
     if 'user' in session:
-        return render_template('front.html', name=session['user'])
+        return render_template('homepage.html')
     else:
         return render_template('front.html')
 
 
+@login_manager.user_loader
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     session.clear()
@@ -44,6 +42,7 @@ def login():
     return render_template('login.html')
 
 
+@login_manager.user_loader
 @app.route('/register', methods=['POST', 'GET'])
 def register():
     if request.method == "POST":
@@ -55,7 +54,7 @@ def register():
             flash(f'Username {user} is already taken')
             return redirect(url_for('register'))
         else:
-            df2=pd.read_csv('db.csv')
+            df2 = pd.read_csv('db.csv')
             df = df.append({'User': user, 'Pass': password, 'Email': email, 'Id': len(df) + 1}, ignore_index=True)
             df2 = df2.append({'Wins': 0, 'Games': 0, 'Avr. Time': 0, 'Username': user}, ignore_index=True)
             df2.to_csv('db.csv', index=False)
@@ -64,6 +63,7 @@ def register():
     return render_template('register.html')
 
 
+@login_manager.user_loader
 @app.route('/profile')
 def user_profile():
     try:
@@ -78,3 +78,4 @@ def user_profile():
 
 if __name__ == '__main__':
     app.run(debug=True)
+    print(session['user'])

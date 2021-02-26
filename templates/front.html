@@ -37,9 +37,17 @@
   }
 
   .auth_button:hover {
+    transition: background-color 0.3s ease 0s;
     background-color: #4B4B4B;
     cursor: pointer;
-    color: #C0BDBD;
+  }
+
+  .small_text {
+    margin: 3%;
+    color: #D1D1D1;
+    text-decoration: none;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 15px;
   }
 
   .big_text {
@@ -51,53 +59,12 @@
     font-size: 65px;
   }
 
-  .small_text {
-    margin: 3%;
-    color: #D1D1D1;
-    text-decoration: none;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 15px;
-  }
-
-  .auth_button {
-    color: white;
-    background-color: #24252a;
-    padding: 15px 30px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    border-radius: 100px;
-    font-family: 'Open Sans', sans-serif;
-    margin-left: 5%;
-    margin-right: 5%;
-
-}
-
-  a, a:link, a:visited {
-      color: white;
-      text-decoration: none;
-    }
-
-  .auth_button:hover {
-    background-color: #4B4B4B;
-    cursor: pointer;
-    color: #C0BDBD;
-  }
-
-  .small_text {
-    margin: 3%;
-    color: #D1D1D1;
-    text-decoration: none;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 15px;
-  }
 </style>
+
 
 <div style="margin-left: 80%; margin-top: 2%;">
   <a class="auth_button" href="/login"><b>Sign In</b></a>
-  <a class="auth_button" href="/login"><b>Sign Up</b></a>
+  <a class="auth_button" href="/register"><b>Sign Up</b></a>
 </div>
 
 <div class="big_text">
