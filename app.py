@@ -32,8 +32,10 @@ def login():
     if request.method == "POST":
         df = pd.read_csv('user.csv')
         user = request.form.get("uname")
+
         password = request.form.get("psw")
         if decoder(df[df['User'] == user]['Pass'].values[0]) == password:
+            session['user']=user
             return redirect(url_for('user_profile'))
         else:
             flash('Incorrect username or password')
