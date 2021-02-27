@@ -93,8 +93,8 @@ def settings_page():
     if 'user' in session:
         return render_template('settingspage.html')
     else:
+        login()
         return render_template('login.html')
-
 
 
 if __name__ == '__main__':
