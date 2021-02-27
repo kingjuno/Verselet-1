@@ -9,6 +9,7 @@ login_manager = LoginManager()
 app.secret_key = 'ec52e5ead3899e4a0717b9806e1125de8af3bad84ca7f511'
 login_manager.init_app(app)
 
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
@@ -42,7 +43,6 @@ def login():
                 redirect(url_for('login'))
 
         except:
-
             flash('Incorrect username or password')
             redirect(url_for('login'))
     return render_template('login.html')
@@ -56,13 +56,14 @@ def register():
         email = request.form.get('email')
         user = request.form.get("uname")
         password = encoder(request.form.get("psw"))
-        dob=request.form.get('dob')
+        dob = request.form.get('dob')
         if user in df.User.values:
             flash(f'Username {user} is already taken')
             return redirect(url_for('register'))
         else:
             df2 = pd.read_csv('db.csv')
-            df = df.append({'User': user, 'Pass': password, 'Email': email, 'Id': len(df) + 1,'DOB':dob}, ignore_index=True)
+            df = df.append({'User': user, 'Pass': password, 'Email': email, 'Id': len(df) + 1, 'DOB': dob},
+                           ignore_index=True)
             df2 = df2.append({'Wins': 0, 'Games': 0, 'Avr. Time': 0, 'Username': user}, ignore_index=True)
             df2.to_csv('db.csv', index=False)
             df.to_csv('user.csv', index=False)
@@ -77,7 +78,8 @@ def user_profile():
         dob = ''; e_mail = ''; inx = 0
         month = ['empty', 'January', 'February', 'March', 'April', 'May', 'June',
                  'July', 'August', 'September', 'October', 'November', 'December']
-        df2 = pd.read_csv('db.csv'); udb = pd.read_csv('User.csv')
+        df2 = pd.read_csv('db.csv')
+        udb = pd.read_csv('User.csv')
         wins = df2[df2['Username'] == session['user']]['Wins'].values[0]
         games = df2[df2['Username'] == session['user']]['Games'].values[0]
         for i in udb['User']:
