@@ -73,15 +73,24 @@ def register():
 @app.route('/profile')
 def user_profile():
     try:
+        dob = ''; e_mail = ''; inx = 0
+        month = ['empty', 'January', 'February', 'March', 'April', 'May', 'June',
+                 'July', 'August', 'September', 'October', 'November', 'December']
         df2 = pd.read_csv('db.csv'); udb = pd.read_csv('User.csv')
-        wins = df2[df2['Username'] == session['user']]['Wins'].values[0];e_mail = ''
-        games = df2[df2['Username'] == session['user']]['Games'].values[0]; inx = 0
+        wins = df2[df2['Username'] == session['user']]['Wins'].values[0]
+        games = df2[df2['Username'] == session['user']]['Games'].values[0]
         for i in udb['User']:
             if udb['User'].values[inx] == session['user']:
-                e_mail = udb['Email'][inx]
+                e_mail = udb['Email'][inx]; dob = udb['DOB'][inx]
             else:
                 inx += 1
-        return render_template('profile.html', w=wins, g=games, u=session['user'], e=e_mail)
+        # 2007-01-02
+        doby = dob[0:4]; dobd = dob[8:10]
+        if '0' == dob[5]:
+            dobm = month[int(dob[6])]
+        else:
+            dobm = month[int(dob[5:7])]
+        return render_template('profile.html', w=wins, g=games, u=session['user'], e=e_mail, d=dobd, m=dobm, y=doby)
     except:
         flash("Please login or create an account first")
         return redirect(url_for('login'))
