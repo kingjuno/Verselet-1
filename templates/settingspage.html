@@ -22,7 +22,26 @@
     <div class="row">
 
         <div class="column" style="">
-            <div style="font-family: 'Lato', sans-serif; text-align: left; font-size: 40px;"><span style="color: #A44AA4;">P</span>rofile Preferences :</div>
+            <div style="font-family: 'Lato', sans-serif; text-align: left; font-size: 40px;"><span style="color: #A44AA4;">P</span>rofile Settings :</div>
+        </div>
+
+        <div class="column"  style="font-family: 'Poppins', sans-serif; font-size: 20px;">
+            <br><label for="uname"><b><span style="text-align: left; color: #A44AA4; font-size: 30px;">N</span>ame :</b></label>
+            <input style="width:250px; margin-left: 5%; float: right;" type="text" name="unameedit" placeholder="NAME DATA COLUMN COMING SOON"><br>
+            <br><label for="email"><b><span style="text-align: left; color: #A44AA4; font-size: 30px;">P</span>rofile Picture :</b></label>
+            <input style="width:250px; margin-left: 5%; float: right;" type="text" name="emailedit" placeholder="IMAGE INSERT COMING SOON"><br>
+            <br><label for="dob"><b><span style="text-align: left; color: #A44AA4; font-size: 30px;">D</span>ate of birth :</b></label>
+            <input style="float: right; margin-top: 2%; font-size: 1rem" type="date" value="{{ d }}" placeholder="Date of Birth" name="dob">
+        </div>
+
+    </div>
+
+    <br><br><br>
+
+    <div class="row">
+
+        <div class="column" style="">
+            <div style="font-family: 'Lato', sans-serif; text-align: left; font-size: 40px;"><span style="color: #A44AA4;">A</span>ccount Settings :</div>
         </div>
 
         <div class="column"  style="font-family: 'Poppins', sans-serif; font-size: 20px;">
@@ -30,8 +49,13 @@
             <input style="width:250px; margin-left: 5%; float: right;" type="text" name="unameedit" placeholder="{{ u }}"><br>
             <br><label for="email"><b><span style="text-align: left; color: #A44AA4; font-size: 30px;">E</span>mail address :</b></label>
             <input style="width:250px; margin-left: 5%; float: right;" type="text" name="emailedit" placeholder="{{ e }}"><br>
-            <br><label for="dob"><b><span style="text-align: left; color: #A44AA4; font-size: 30px;">D</span>ate of birth :</b></label>
-            <input style="float: right; margin-top: 2%; font-size: 1rem" type="date" value="{{ d }}" placeholder="Date of Birth" name="dob" id="dob">
+            <br><label for="dob"><b><span style="text-align: left; color: #A44AA4; font-size: 30px;">P</span>assword :</b></label>
+            <input style="width:250px; margin-left: 5%; float: right;" type="text" name="passedit"><br><br><br><br>
+
+            <br><label for="dob"><b><span style="text-align: left; color: #A44AA4; font-size: 30px;">P</span>assword :</b></label>
+            <input style="width:250px; margin-left: 5%; float: right;" type="text" name="passedit" value="Insert current password."><br><br>
+            <button style="font-size: 17px; font-family: 'Work Sans', sans-serif;" type="submit">Confirm</button>
+
         </div>
 
     </div>
