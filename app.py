@@ -55,12 +55,13 @@ def register():
         email = request.form.get('email')
         user = request.form.get("uname")
         password = encoder(request.form.get("psw"))
+        dob=request.form.get('dob')
         if user in df.User.values:
             flash(f'Username {user} is already taken')
             return redirect(url_for('register'))
         else:
             df2 = pd.read_csv('db.csv')
-            df = df.append({'User': user, 'Pass': password, 'Email': email, 'Id': len(df) + 1}, ignore_index=True)
+            df = df.append({'User': user, 'Pass': password, 'Email': email, 'Id': len(df) + 1,'DOB':dob}, ignore_index=True)
             df2 = df2.append({'Wins': 0, 'Games': 0, 'Avr. Time': 0, 'Username': user}, ignore_index=True)
             df2.to_csv('db.csv', index=False)
             df.to_csv('user.csv', index=False)
