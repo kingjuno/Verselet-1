@@ -90,7 +90,6 @@ def user_profile():
 @app.route('/settings')
 def settings_page():
     if 'user' in session:
-        flash("Please login or create an account first")
         return render_template('settingspage.html')
     else:
         return render_template('login.html')
