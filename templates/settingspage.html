@@ -7,6 +7,7 @@
 
     @import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
     @import url('https://fonts.googleapis.com/css2?family=Fira+Sans:wght@500&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200&display=swap');
 
     body {
     background-image: url({{ url_for('static', filename='light_dots.gif')}});
@@ -18,7 +19,22 @@
 
     <div class="big_text"><span style="color: #A44AA4; margin-top: 3%;">S</span>ettings</div><br><br><br><br><br><br>
 
-    <div style="font-family: 'Lato', sans-serif; text-align: left; font-size: 40px;"><span style="color: #A44AA4;">P</span>rofile Preferences :</div>
+    <div class="row">
+
+        <div class="column" style="">
+            <div style="font-family: 'Lato', sans-serif; text-align: left; font-size: 40px;"><span style="color: #A44AA4;">P</span>rofile Preferences :</div>
+        </div>
+
+        <div class="column"  style="font-family: 'Poppins', sans-serif; font-size: 20px;">
+            <br><label for="uname"><b><span style="text-align: left; color: #A44AA4; font-size: 30px;">U</span>sername :</b></label>
+            <input style="width:250px; margin-left: 5%; float: right;" type="text" name="unameedit" placeholder="{{ u }}"><br>
+            <br><label for="email"><b><span style="text-align: left; color: #A44AA4; font-size: 30px;">E</span>mail address :</b></label>
+            <input style="width:250px; margin-left: 5%; float: right;" type="text" name="emailedit" placeholder="{{ e }}"><br>
+            <br><label for="dob"><b><span style="text-align: left; color: #A44AA4; font-size: 30px;">D</span>ate of birth :</b></label>
+            <input style="float: right; margin-top: 2%; font-size: 1rem" type="date" value="{{ d }}" placeholder="Date of Birth" name="dob" id="dob">
+        </div>
+
+    </div>
 
 </div>
 

@@ -103,7 +103,23 @@ def user_profile():
 @app.route('/settings')
 def settings_page():
     if 'user' in session:
-        return render_template('settingspage.html')
+        try:
+            dob = ''; e_mail = ''; inx = 0
+            month = ['empty', 'January', 'February', 'March', 'April', 'May', 'June',
+                     'July', 'August', 'September', 'October', 'November', 'December']
+            df2 = pd.read_csv('db.csv')
+            udb = pd.read_csv('User.csv')
+            wins = df2[df2['Username'] == session['user']]['Wins'].values[0]
+            games = df2[df2['Username'] == session['user']]['Games'].values[0]
+            for i in udb['User']:
+                if udb['User'].values[inx] == session['user']:
+                    e_mail = udb['Email'][inx]; dob = udb['DOB'][inx]
+                else:
+                    inx += 1
+            return render_template('settingspage.html', w=wins, g=games, u=session['user'], e=e_mail, d=dob)
+        except:
+            login()
+            return render_template('login.html')
     else:
         login()
         return render_template('login.html')
