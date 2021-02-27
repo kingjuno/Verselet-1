@@ -30,8 +30,8 @@ def login():
     if request.method == "POST":
         df = pd.read_csv('user.csv')
         user = request.form.get("uname")
-
         password = request.form.get("psw")
+
         try:
             if df[df['User'] == user]['Pass'].values[0] == encoder(password):
                 session['user'] = user
@@ -42,8 +42,9 @@ def login():
                 redirect(url_for('login'))
 
         except:
-            flash("User doesn't Exist")
-            redirect(url_for('register'))
+
+            flash('Incorrect username or password')
+            redirect(url_for('login'))
     return render_template('login.html')
 
 
