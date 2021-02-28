@@ -19,11 +19,6 @@
 }
 </style>
 
-<h1>{% with messages = get_flashed_messages(with_categories=True) %}
-      {% for category, message in messages %}
-        <div class="flash {{category}}">{{message}}</div>
-      {% endfor %}
-  {% endwith%}</h1>
 <form style="overflow: visible;" method="POST">
   <div style="font-family: 'Poppins', sans-serif; padding: 16px; margin: auto; margin-top: 10%; width: 50%; padding: 10px; color: #D7D7D7;">
     <h1 style="color: white;">Register</h1>
@@ -45,6 +40,14 @@
       <label for="dob"><b>Date of Birth</b></label>
       <input style="float: right;" type="date" placeholder="Date of Birth" name="dob" id="dob" required>
     </div>
+
+    <h1>
+      {% with messages = get_flashed_messages(with_categories=True) %}
+        {% for category, message in messages %}
+          <div style="font-family: 'Roboto Mono', monospace; font-size: 17px; color: #CA0000" class="flash {{category}}">{{message}}</div>
+        {% endfor %}
+      {% endwith%}
+    </h1>
 
     <hr>
 

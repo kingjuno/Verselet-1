@@ -58,7 +58,9 @@ def register():
         password = encoder(request.form.get("psw"))
         dob = request.form.get('dob')
         if user in df.User.values:
-            flash(f'Username {user} is already taken')
+            flash(f'An account with that username already exists.')
+        elif email in df.values:
+            flash(f'An account with that email address already exists.')
             return redirect(url_for('register'))
         else:
             df2 = pd.read_csv('db.csv')
@@ -100,7 +102,7 @@ def user_profile():
 
 
 @login_manager.user_loader
-@app.route('/settings')
+@app.route('/settings', methods=['POST', 'GET'])
 def settings_page():
     if 'user' in session:
         try:
@@ -116,12 +118,21 @@ def settings_page():
                     e_mail = udb['Email'][inx]; dob = udb['DOB'][inx]
                 else:
                     inx += 1
+            if request.method == 'POST':
+                df = pd.read_csv('User.csv'); inx = 0
+                for i in df.User:
+                    if i == session['user']:
+                        print(request.form.get('emailedit'))
+                        df.replace(to_replace=df.Email[inx], value=request.form.get('emailedit'), inplace=True)
+                        df.to_csv('User.csv')
+                        print(df.Email[inx])
+                    else: inx += 1
+                return render_template('homepage.html')
             return render_template('settingspage.html', w=wins, g=games, u=session['user'], e=e_mail, d=dob)
         except:
             login()
             return render_template('login.html')
     else:
-        login()
         return render_template('login.html')
 
 
