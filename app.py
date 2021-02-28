@@ -132,16 +132,13 @@ def settings_page():
                             if request.form.get('p') == decoder(df.Pass[inx]):
                                 index = 0
                                 df.replace(to_replace=df.User[inx], value=request.form.get('unameedit'), inplace=True)
-                                df.to_csv('User.csv')
+                                df.to_csv('User.csv', index=False)
                                 print(ud.Username)
                                 for j in ud.Username:
                                     if j == session['user']:
-                                        print(j, 'is equal to', df.User[inx])
-                                        print('replacing', ud.Username[inx])
                                         ud.replace(to_replace=ud.Username[inx], value=request.form.get('unameedit'),
                                                    inplace=True)
-                                        ud.to_csv('db.csv')
-                                        print('/static/' + session['user'] + '.png'); print('/static/' + request.form.get('unameedit') + '.png')
+                                        ud.to_csv('db.csv', index=False)
                                         os.rename('static/' + session['user'] + '.png', 'static/' + request.form.get('unameedit') + '.png')
                                         session['user'] = request.form.get('unameedit')
                                     else: index += 1
