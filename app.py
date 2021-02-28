@@ -20,10 +20,8 @@ def page_not_found(e):
 @login_manager.user_loader
 @app.route('/')
 def front():
-    if 'user' in session:
-        return render_template('homepage.html')
-    else:
-        return render_template('front.html')
+    if 'user' in session: return render_template('homepage.html')
+    else: return render_template('front.html')
 
 
 @login_manager.user_loader
@@ -41,7 +39,6 @@ def login():
             else:
                 flash('Incorrect username or password')
                 redirect(url_for('login'))
-
         except:
             flash('Incorrect username or password')
             redirect(url_for('login'))
@@ -70,7 +67,7 @@ def register():
             df2 = df2.append({'Wins': 0, 'Games': 0, 'Avr. Time': 0, 'Username': user}, ignore_index=True)
             df2.to_csv('db.csv', index=False)
             df.to_csv('user.csv', index=False)
-            session['user']=user
+            session['user'] = user
             im1 = Image.open('static/base.png')
             im1.save(f'static/{user}.png')
             return redirect(url_for('front'))
@@ -92,14 +89,10 @@ def user_profile():
         for i in udb['User']:
             if udb['User'].values[inx] == session['user']:
                 e_mail = udb['Email'][inx]; dob = udb['DOB'][inx]
-            else:
-                inx += 1
-        # 2007-01-02
+            else: inx += 1
         doby = dob[0:4]; dobd = dob[8:10]
-        if '0' == dob[5]:
-            dobm = month[int(dob[6])]
-        else:
-            dobm = month[int(dob[5:7])]
+        if '0' == dob[5]: dobm = month[int(dob[6])]
+        else: dobm = month[int(dob[5:7])]
         return render_template('profile.html', w=wins, pfp=pfp, g=games, u=session['user'], e=e_mail, d=dobd, m=dobm, y=doby)
     except:
         flash("Please login or create an account first")
@@ -119,8 +112,7 @@ def settings_page():
             wins = df2[df2['Username'] == session['user']]['Wins'].values[0]
             games = df2[df2['Username'] == session['user']]['Games'].values[0]
             for i in udb['User']:
-                if udb['User'].values[inx] == session['user']:
-                    e_mail = udb['Email'][inx];dob = udb['DOB'][inx]
+                if udb['User'].values[inx] == session['user']: e_mail = udb['Email'][inx];dob = udb['DOB'][inx]
                 else: inx += 1
             if request.method == 'POST':
                 df = pd.read_csv('User.csv'); ud = pd.read_csv('db.csv'); inx = 0
@@ -154,8 +146,7 @@ def settings_page():
                             else:
                                 flash('Incorrect password.')
                                 settings_page()
-                    else:
-                        inx += 1
+                    else: inx += 1
                 return render_template('homepage.html')
             return render_template('settingspage.html', w=wins, g=games, u=session['user'], e=e_mail, d=dob)
         except:
@@ -167,4 +158,3 @@ def settings_page():
 
 if __name__ == '__main__':
     app.run(debug=True)
-    print(session['user'])
