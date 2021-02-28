@@ -131,17 +131,25 @@ def settings_page():
                                 'passedit') != " ":
                             if request.form.get('p') == decoder(df.Pass[inx]):
                                 index = 0
-                                df.replace(to_replace=df.User[inx], value=request.form.get('unameedit'), inplace=True)
-                                df.to_csv('User.csv', index=False)
-                                print(ud.Username)
-                                for j in ud.Username:
-                                    if j == session['user']:
-                                        ud.replace(to_replace=ud.Username[inx], value=request.form.get('unameedit'),
-                                                   inplace=True)
-                                        ud.to_csv('db.csv', index=False)
-                                        os.rename('static/' + session['user'] + '.png', 'static/' + request.form.get('unameedit') + '.png')
-                                        session['user'] = request.form.get('unameedit')
-                                    else: index += 1
+                                if request.form.get('unameedit') != " ":
+                                    df.replace(to_replace=df.User[inx], value=request.form.get('unameedit'), inplace=True)
+                                    df.to_csv('User.csv', index=False)
+                                    for j in ud.Username:
+                                        if j == session['user']:
+                                            ud.replace(to_replace=ud.Username[inx], value=request.form.get('unameedit'),
+                                                       inplace=True)
+                                            ud.to_csv('db.csv', index=False)
+                                            os.rename('static/' + session['user'] + '.png', 'static/' + request.form.get('unameedit') + '.png')
+                                            session['user'] = request.form.get('unameedit')
+                                        else: index += 1
+                                if request.form.get('emailedit') != " ":
+                                    df.replace(to_replace=df.Email[inx], value=request.form.get('emailedit'),
+                                               inplace=True)
+                                    df.to_csv('User.csv', index=False)
+                                if request.form.get('passedit') != " ":
+                                    df.replace(to_replace=df.Pass[inx], value=encoder(request.form.get('passedit')),
+                                               inplace=True)
+                                    df.to_csv('User.csv', index=False)
                                 return render_template('homepage.html')
                             else:
                                 flash('Incorrect password.')
