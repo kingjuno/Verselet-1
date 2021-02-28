@@ -27,24 +27,22 @@ def front():
 @login_manager.user_loader
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    session.clear()
     if request.method == "POST":
+        session.clear()
         df = pd.read_csv('user.csv')
         user = request.form.get("uname")
         password = request.form.get("psw")
-
         try:
-            if df[df['User'] == user]['Pass'].values[0] == encoder(password):
+            if decoder(df[df['User'] == user]['Pass'].values[0]) == password:
                 session['user'] = user
-                flash(f'Welcome, {user}')
                 return redirect(url_for('user_profile'))
             else:
                 flash('Incorrect username or password')
                 redirect(url_for('login'))
 
         except:
-            flash('Incorrect username or password')
-            redirect(url_for('login'))
+            flash('User not found')
+            redirect(url_for('register'))
     return render_template('login.html')
 
 
@@ -59,7 +57,8 @@ def register():
         dob = request.form.get('dob')
         if user in df.User.values:
             flash(f'An account with that username already exists.')
-        elif email in df.values:
+            return redirect(url_for('register'))
+        elif email in df.Email.values:
             flash(f'An account with that email address already exists.')
             return redirect(url_for('register'))
         else:
@@ -69,6 +68,9 @@ def register():
             df2 = df2.append({'Wins': 0, 'Games': 0, 'Avr. Time': 0, 'Username': user}, ignore_index=True)
             df2.to_csv('db.csv', index=False)
             df.to_csv('user.csv', index=False)
+            session['user']=user
+            im1 = Image.open('static/base.png')
+            im1.save(f'static/{user}.png')
             return redirect(url_for('front'))
     return render_template('register.html')
 
@@ -81,6 +83,7 @@ def user_profile():
         month = ['empty', 'January', 'February', 'March', 'April', 'May', 'June',
                  'July', 'August', 'September', 'October', 'November', 'December']
         df2 = pd.read_csv('db.csv')
+        pfp=f'static/{session["user"]}.png'
         udb = pd.read_csv('User.csv')
         wins = df2[df2['Username'] == session['user']]['Wins'].values[0]
         games = df2[df2['Username'] == session['user']]['Games'].values[0]
@@ -95,7 +98,7 @@ def user_profile():
             dobm = month[int(dob[6])]
         else:
             dobm = month[int(dob[5:7])]
-        return render_template('profile.html', w=wins, g=games, u=session['user'], e=e_mail, d=dobd, m=dobm, y=doby)
+        return render_template('profile.html', w=wins,pfp=pfp, g=games, u=session['user'], e=e_mail, d=dobd, m=dobm, y=doby)
     except:
         flash("Please login or create an account first")
         return redirect(url_for('login'))
@@ -124,7 +127,7 @@ def settings_page():
                     if i == session['user']:
                         print(request.form.get('emailedit'))
                         df.replace(to_replace=df.Email[inx], value=request.form.get('emailedit'), inplace=True)
-                        df.to_csv('User.csv')
+                        df.to_csv('User.csv',index=False)
                         print(df.Email[inx])
                     else: inx += 1
                 return render_template('homepage.html')
