@@ -1,7 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_login import LoginManager, current_user, UserMixin
 import pandas as pd
+from PIL import Image
 from ExtraStuff import decoder, encoder
+import os
 
 app = Flask(__name__)
 
@@ -27,8 +29,8 @@ def front():
 @login_manager.user_loader
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    session.clear()
     if request.method == "POST":
-        session.clear()
         df = pd.read_csv('user.csv')
         user = request.form.get("uname")
         password = request.form.get("psw")
@@ -41,8 +43,8 @@ def login():
                 redirect(url_for('login'))
 
         except:
-            flash('User not found')
-            redirect(url_for('register'))
+            flash('Incorrect username or password')
+            redirect(url_for('login'))
     return render_template('login.html')
 
 
@@ -83,7 +85,7 @@ def user_profile():
         month = ['empty', 'January', 'February', 'March', 'April', 'May', 'June',
                  'July', 'August', 'September', 'October', 'November', 'December']
         df2 = pd.read_csv('db.csv')
-        pfp=f'static/{session["user"]}.png'
+        pfp = f'static/{session["user"]}.png'
         udb = pd.read_csv('User.csv')
         wins = df2[df2['Username'] == session['user']]['Wins'].values[0]
         games = df2[df2['Username'] == session['user']]['Games'].values[0]
@@ -98,7 +100,7 @@ def user_profile():
             dobm = month[int(dob[6])]
         else:
             dobm = month[int(dob[5:7])]
-        return render_template('profile.html', w=wins,pfp=pfp, g=games, u=session['user'], e=e_mail, d=dobd, m=dobm, y=doby)
+        return render_template('profile.html', w=wins, pfp=pfp, g=games, u=session['user'], e=e_mail, d=dobd, m=dobm, y=doby)
     except:
         flash("Please login or create an account first")
         return redirect(url_for('login'))
@@ -118,18 +120,37 @@ def settings_page():
             games = df2[df2['Username'] == session['user']]['Games'].values[0]
             for i in udb['User']:
                 if udb['User'].values[inx] == session['user']:
-                    e_mail = udb['Email'][inx]; dob = udb['DOB'][inx]
-                else:
-                    inx += 1
+                    e_mail = udb['Email'][inx];dob = udb['DOB'][inx]
+                else: inx += 1
             if request.method == 'POST':
-                df = pd.read_csv('User.csv'); inx = 0
+                df = pd.read_csv('User.csv'); ud = pd.read_csv('db.csv'); inx = 0
                 for i in df.User:
                     if i == session['user']:
-                        print(request.form.get('emailedit'))
-                        df.replace(to_replace=df.Email[inx], value=request.form.get('emailedit'), inplace=True)
-                        df.to_csv('User.csv',index=False)
-                        print(df.Email[inx])
-                    else: inx += 1
+                        if request.form.get('unameedit') != " " or request.form.get(
+                                'emailedit') != " " or request.form.get('dob') != " " or request.form.get(
+                                'passedit') != " ":
+                            if request.form.get('p') == decoder(df.Pass[inx]):
+                                index = 0
+                                df.replace(to_replace=df.User[inx], value=request.form.get('unameedit'), inplace=True)
+                                df.to_csv('User.csv')
+                                print(ud.Username)
+                                for j in ud.Username:
+                                    if j == session['user']:
+                                        print(j, 'is equal to', df.User[inx])
+                                        print('replacing', ud.Username[inx])
+                                        ud.replace(to_replace=ud.Username[inx], value=request.form.get('unameedit'),
+                                                   inplace=True)
+                                        ud.to_csv('db.csv')
+                                        print('/static/' + session['user'] + '.png'); print('/static/' + request.form.get('unameedit') + '.png')
+                                        os.rename('static/' + session['user'] + '.png', 'static/' + request.form.get('unameedit') + '.png')
+                                        session['user'] = request.form.get('unameedit')
+                                    else: index += 1
+                                return render_template('homepage.html')
+                            else:
+                                flash('Incorrect password.')
+                                settings_page()
+                    else:
+                        inx += 1
                 return render_template('homepage.html')
             return render_template('settingspage.html', w=wins, g=games, u=session['user'], e=e_mail, d=dob)
         except:
