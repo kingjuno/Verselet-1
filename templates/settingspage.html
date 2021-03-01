@@ -39,7 +39,7 @@
 
 <div class="banner" style="color:white;">
 
-    <form style="overflow: visible;" method="POST">
+    <form style="overflow: visible;" method="POST" enctype = "multipart/form-data">
 
         <div class="big_text"><span style="color: #A44AA4; margin-top: 3%;">S</span>ettings</div><br><br><br><br><br><br>
         <div class="row">
@@ -52,7 +52,7 @@
                 <br><label for="uname"><b><span style="text-align: left; color: #A44AA4; font-size: 30px;">N</span>ame :</b></label>
                 <input style="width:250px; margin-left: 5%; float: right; border-radius: 25px; border: 2px solid #1d1d1d;" type="text" name="nameedit" placeholder="NAME DATA COLUMN COMING SOON"><br>
                 <br><label for="email"><b><span style="text-align: left; color: #A44AA4; font-size: 30px;">P</span>rofile Picture :</b></label>
-                <input style="width:250px; margin-left: 5%; float: right; border-radius: 25px; border: 2px solid #1d1d1d;" type="text" name="pfpedit" placeholder="IMAGE INSERT COMING SOON"><br>
+                <input style="width:250px; margin-left: 5%; float: right; border-radius: 25px; border: 2px solid #1d1d1d;" type="file" name="file" placeholder="IMAGE INSERT COMING SOON"><br>
                 <br><label for="dob"><b><span style="text-align: left; color: #A44AA4; font-size: 30px;">D</span>ate of birth :</b></label>
                 <input style="float: right; margin-top: 2%; font-size: 1rem;" type="date" value="{{ d }}" placeholder="Date of Birth" name="dob">
             </div>

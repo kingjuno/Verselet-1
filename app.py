@@ -2,14 +2,17 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from flask_login import LoginManager, current_user, UserMixin
 import pandas as pd
 from PIL import Image
-from ExtraStuff import decoder, encoder
+from ExtraStuff import decoder, encoder, resize
+# from werkzeug import secure_filename
 import os
 
 app = Flask(__name__)
-
+# location for profil pics
+UPLOAD_FOLDER="static/"
 login_manager = LoginManager()
 app.secret_key = 'ec52e5ead3899e4a0717b9806e1125de8af3bad84ca7f511'
 login_manager.init_app(app)
+
 
 
 @app.errorhandler(404)
@@ -29,7 +32,7 @@ def front():
 def login():
     session.clear()
     if request.method == "POST":
-        df = pd.read_csv('user.csv')
+        df = pd.read_csv('User.csv')
         user = request.form.get("uname")
         password = request.form.get("psw")
         try:
@@ -49,7 +52,7 @@ def login():
 @app.route('/register', methods=['POST', 'GET'])
 def register():
     if request.method == "POST":
-        df = pd.read_csv('user.csv')
+        df = pd.read_csv('User.csv')
         email = request.form.get('email')
         user = request.form.get("uname")
         password = encoder(request.form.get("psw"))
@@ -66,7 +69,7 @@ def register():
                            ignore_index=True)
             df2 = df2.append({'Wins': 0, 'Games': 0, 'Avr. Time': 0, 'Username': user}, ignore_index=True)
             df2.to_csv('db.csv', index=False)
-            df.to_csv('user.csv', index=False)
+            df.to_csv('User.csv', index=False)
             session['user'] = user
             im1 = Image.open('static/base.png')
             im1.save(f'static/{user}.png')
@@ -121,18 +124,20 @@ def settings_page():
             # DOING THE ACTUAL CHANGES
 
             if request.method == 'POST':
+
                 df = pd.read_csv('User.csv'); ud = pd.read_csv('db.csv'); inx = 0
                 for i in df.User:
                     if i == session['user']:
                         # CHECKING IF ANY CHANGES ARE REQUESTED
-                        if request.form.get('unameedit') != " " or request.form.get(
-                                'emailedit') != " " or request.form.get('dob') != " " or request.form.get(
-                                'passedit') != " ":
+                        uploaded_file=request.files["file"]
+                        if request.form.get('unameedit') != "" or request.form.get(
+                                'emailedit') != "" or request.form.get('dob') != "" or request.form.get(
+                                'passedit') != "" or uploaded_file.filename != "":
                             # CHECK IF PASSWORD IS CORRECT
                             if request.form.get('p') == decoder(df.Pass[inx]):
                                 index = 0
                                 # USERNAME EDIT
-                                if request.form.get('unameedit') != " ":
+                                if request.form.get('unameedit') != "":
                                     if request.form.get('unameedit') in list(df.User):
                                         flash("Username already taken")
                                         settings_page()
@@ -153,7 +158,7 @@ def settings_page():
                                             else:
                                                 index += 1
                                 # EMAIL EDIT
-                                if request.form.get('emailedit') != " ":
+                                if request.form.get('emailedit') != "":
                                     if request.form.get('emailedit') in list(df.Email):
                                         flash("An account with this email address already exists")
                                         settings_page()
@@ -162,8 +167,14 @@ def settings_page():
                                         df.replace(to_replace=df.Email[inx], value=request.form.get('emailedit'),
                                                    inplace=True)
                                         df.to_csv('User.csv', index=False)
+                                # edit profile pic
+                                if uploaded_file.filename != '':
+                                    path= os.path.join(UPLOAD_FOLDER, i+"."+uploaded_file.filename.split(".")[-1])
+                                    uploaded_file.save(path)
+                                    # Resize profile pic to 64x64
+                                    resize(path)
                                 # PASSWORD EDIT
-                                if request.form.get('passedit') != " ":
+                                if request.form.get('passedit') != "":
                                     df.replace(to_replace=df.Pass[inx], value=encoder(request.form.get('passedit')),
                                                inplace=True)
                                     df.to_csv('User.csv', index=False)
@@ -171,11 +182,12 @@ def settings_page():
                             else:
                                 flash('Incorrect password')
                                 return render_template('settingspage.html')
-                    else: inx += 1
+                    else:
+                        inx += 1
                 return render_template('homepage.html')
             return render_template('settingspage.html', w=wins, g=games, u=session['user'], e=e_mail, d=dob)
-        except:
-            login()
+        except Exception as e:
+            print(e)
             return render_template('login.html')
     else:
         return render_template('login.html')
