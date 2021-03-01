@@ -104,6 +104,9 @@ def user_profile():
 def settings_page():
     if 'user' in session:
         try:
+
+            # PASSING ALL INFO TO DISPLAY
+
             dob = ''; e_mail = ''; inx = 0
             month = ['empty', 'January', 'February', 'March', 'April', 'May', 'June',
                      'July', 'August', 'September', 'October', 'November', 'December']
@@ -114,30 +117,49 @@ def settings_page():
             for i in udb['User']:
                 if udb['User'].values[inx] == session['user']: e_mail = udb['Email'][inx];dob = udb['DOB'][inx]
                 else: inx += 1
+
+            # DOING THE ACTUAL CHANGES
+
             if request.method == 'POST':
                 df = pd.read_csv('User.csv'); ud = pd.read_csv('db.csv'); inx = 0
                 for i in df.User:
                     if i == session['user']:
+                        # CHECKING IF ANY CHANGES ARE REQUESTED
                         if request.form.get('unameedit') != " " or request.form.get(
                                 'emailedit') != " " or request.form.get('dob') != " " or request.form.get(
                                 'passedit') != " ":
+                            # CHECK IF PASSWORD IS CORRECT
                             if request.form.get('p') == decoder(df.Pass[inx]):
                                 index = 0
+                                # USERNAME EDIT
                                 if request.form.get('unameedit') != " ":
-                                    df.replace(to_replace=df.User[inx], value=request.form.get('unameedit'), inplace=True)
-                                    df.to_csv('User.csv', index=False)
-                                    for j in ud.Username:
-                                        if j == session['user']:
-                                            ud.replace(to_replace=ud.Username[inx], value=request.form.get('unameedit'),
-                                                       inplace=True)
-                                            ud.to_csv('db.csv', index=False)
-                                            os.rename('static/' + session['user'] + '.png', 'static/' + request.form.get('unameedit') + '.png')
-                                            session['user'] = request.form.get('unameedit')
-                                        else: index += 1
-                                if request.form.get('emailedit') != " ":
+                                    print('ayyyyy')
+                                    if request.form.get('unameedit') in list(df.User):
+                                        print('failed')
+                                        flash("Username already taken")
+                                        print('returning to page')
+                                        return render_template('settingspage.html')
+                                    else:
+                                        df.replace(to_replace=df.User[inx], value=request.form.get('unameedit'),
+                                                   inplace=True)
+                                        df.to_csv('User.csv', index=False)
+                                        for j in ud.Username:
+                                            if j == session['user']:
+                                                ud.replace(to_replace=ud.Username[inx],
+                                                           value=request.form.get('unameedit'),
+                                                           inplace=True)
+                                                ud.to_csv('db.csv', index=False)
+                                                os.rename('static/' + session['user'] + '.png',
+                                                          'static/' + request.form.get('unameedit') + '.png')
+                                                session['user'] = request.form.get('unameedit')
+                                            else:
+                                                index += 1
+                                # EMAIL EDIT
+                                if request.form.get('emailedit') != " " and request.form.get('emailedit') not in df.Email:
                                     df.replace(to_replace=df.Email[inx], value=request.form.get('emailedit'),
                                                inplace=True)
                                     df.to_csv('User.csv', index=False)
+                                # PASSWORD EDIT
                                 if request.form.get('passedit') != " ":
                                     df.replace(to_replace=df.Pass[inx], value=encoder(request.form.get('passedit')),
                                                inplace=True)
