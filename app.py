@@ -135,6 +135,7 @@ def settings_page():
                                 if request.form.get('unameedit') != " ":
                                     if request.form.get('unameedit') in list(df.User):
                                         flash("Username already taken")
+                                        settings_page()
                                         return render_template('settingspage.html')
                                     else:
                                         df.replace(to_replace=df.User[inx], value=request.form.get('unameedit'),
@@ -155,6 +156,7 @@ def settings_page():
                                 if request.form.get('emailedit') != " ":
                                     if request.form.get('emailedit') in list(df.Email):
                                         flash("An account with this email address already exists")
+                                        settings_page()
                                         return render_template('settingspage.html')
                                     else:
                                         df.replace(to_replace=df.Email[inx], value=request.form.get('emailedit'),
@@ -167,8 +169,8 @@ def settings_page():
                                     df.to_csv('User.csv', index=False)
                                 return render_template('homepage.html')
                             else:
-                                flash('Incorrect password.')
-                                settings_page()
+                                flash('Incorrect password')
+                                return render_template('settingspage.html')
                     else: inx += 1
                 return render_template('homepage.html')
             return render_template('settingspage.html', w=wins, g=games, u=session['user'], e=e_mail, d=dob)
