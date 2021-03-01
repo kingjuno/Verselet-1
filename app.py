@@ -133,11 +133,8 @@ def settings_page():
                                 index = 0
                                 # USERNAME EDIT
                                 if request.form.get('unameedit') != " ":
-                                    print('ayyyyy')
                                     if request.form.get('unameedit') in list(df.User):
-                                        print('failed')
                                         flash("Username already taken")
-                                        print('returning to page')
                                         return render_template('settingspage.html')
                                     else:
                                         df.replace(to_replace=df.User[inx], value=request.form.get('unameedit'),
@@ -155,10 +152,14 @@ def settings_page():
                                             else:
                                                 index += 1
                                 # EMAIL EDIT
-                                if request.form.get('emailedit') != " " and request.form.get('emailedit') not in df.Email:
-                                    df.replace(to_replace=df.Email[inx], value=request.form.get('emailedit'),
-                                               inplace=True)
-                                    df.to_csv('User.csv', index=False)
+                                if request.form.get('emailedit') != " ":
+                                    if request.form.get('emailedit') in list(df.Email):
+                                        flash("An account with this email address already exists")
+                                        return render_template('settingspage.html')
+                                    else:
+                                        df.replace(to_replace=df.Email[inx], value=request.form.get('emailedit'),
+                                                   inplace=True)
+                                        df.to_csv('User.csv', index=False)
                                 # PASSWORD EDIT
                                 if request.form.get('passedit') != " ":
                                     df.replace(to_replace=df.Pass[inx], value=encoder(request.form.get('passedit')),
