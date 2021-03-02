@@ -23,7 +23,8 @@ def page_not_found(e):
 @login_manager.user_loader
 @app.route('/')
 def front():
-    if 'user' in session: return render_template('homepage.html')
+    if 'user' in session: 
+        return render_template('homepage.html')
     else: return render_template('front.html')
 
 
