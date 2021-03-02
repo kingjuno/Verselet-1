@@ -7,8 +7,9 @@ from ExtraStuff import decoder, encoder, resize
 import os
 
 app = Flask(__name__)
-# location for profil pics
-UPLOAD_FOLDER="static/"
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+# location for profile pics
+UPLOAD_FOLDER = "static/"
 login_manager = LoginManager()
 app.secret_key = 'ec52e5ead3899e4a0717b9806e1125de8af3bad84ca7f511'
 login_manager.init_app(app)
@@ -129,7 +130,7 @@ def settings_page():
                 for i in df.User:
                     if i == session['user']:
                         # CHECKING IF ANY CHANGES ARE REQUESTED
-                        uploaded_file=request.files["file"]
+                        uploaded_file = request.files["file"]
                         if request.form.get('unameedit') != "" or request.form.get(
                                 'emailedit') != "" or request.form.get('dob') != "" or request.form.get(
                                 'passedit') != "" or uploaded_file.filename != "":
@@ -167,12 +168,12 @@ def settings_page():
                                         df.replace(to_replace=df.Email[inx], value=request.form.get('emailedit'),
                                                    inplace=True)
                                         df.to_csv('User.csv', index=False)
-                                # edit profile pic
-                                if uploaded_file.filename != '':
-                                    path= os.path.join(UPLOAD_FOLDER, i+"."+uploaded_file.filename.split(".")[-1])
-                                    uploaded_file.save(path)
+                                # PROFILE PICTURE EDIT
+                                if uploaded_file.filename != " ":
+                                    os.remove(UPLOAD_FOLDER + session['user'] + '.png')
+                                    uploaded_file.save(os.path.join(UPLOAD_FOLDER, i + '.png'))
                                     # Resize profile pic to 64x64
-                                    resize(path)
+                                    resize(os.path.join(UPLOAD_FOLDER, i + '.png'))
                                 # PASSWORD EDIT
                                 if request.form.get('passedit') != "":
                                     df.replace(to_replace=df.Pass[inx], value=encoder(request.form.get('passedit')),
@@ -191,6 +192,15 @@ def settings_page():
             return render_template('login.html')
     else:
         return render_template('login.html')
+
+
+@app.after_request
+def add_header(response):
+    # response.cache_control.no_store = True
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '-1'
+    return response
 
 
 if __name__ == '__main__':
