@@ -127,7 +127,7 @@ def settings_page():
                         # CHECKING IF ANY CHANGES ARE REQUESTED
                         if request.form.get('unameedit') != " " or request.form.get(
                                 'emailedit') != " " or request.form.get('dob') != " " or request.form.get(
-                                'passedit') != " ":
+                                'passedit') != " " or request.form.get('pfpedit') != " ":
                             # CHECK IF PASSWORD IS CORRECT
                             if request.form.get('p') == decoder(df.Pass[inx]):
                                 index = 0
