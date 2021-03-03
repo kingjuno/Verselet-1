@@ -1,18 +1,28 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, abort
 from flask_login import LoginManager, current_user, UserMixin
 import pandas as pd
 from PIL import Image
 from ExtraStuff import decoder, encoder, resize
+from Models import Room, db
 # from werkzeug import secure_filename
 import os
-
+import string
+import random
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rooms.db'
 # location for profile pics
+db.init_app(app)
+db.create_all(app=app)
 UPLOAD_FOLDER = "static/"
 login_manager = LoginManager()
 app.secret_key = 'ec52e5ead3899e4a0717b9806e1125de8af3bad84ca7f511'
 login_manager.init_app(app)
+
+def create_app():
+    app = Flask(__name__)
+    db.init_app(app)
+    return app
 
 
 
@@ -49,6 +59,37 @@ def login():
             redirect(url_for('login'))
     return render_template('login.html')
 
+
+@login_manager.user_loader
+@app.route("/create",methods=["POST","GET"])
+def create_room():
+    if request.method == "POST":
+
+        room = Room()
+        link =  ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
+        room.link=link
+        room.users= str(list(session["user"].split(",")))
+        db.session.add(room)
+        db.session.commit()
+        return "The link to your room is: "+room.link
+
+    elif request.method == "GET" :
+        # return website with button to
+        return "<form method=POST><button>Make room</button></form>"
+
+@login_manager.user_loader
+@app.route("/rooms/<link>", methods=["POST","GET"])
+def rooom(link):
+    room = Room.query.filter(Room.link == link).first()
+    if Room is None:
+        abort(404)
+    print(room.users)
+    users= list(room.users)
+    if session["user"] not in users:
+        users.append(session["user"])
+    room.users=str(users)
+    db.session.commit()
+    return f"Your room id is: {room.id}"
 
 @login_manager.user_loader
 @app.route('/register', methods=['POST', 'GET'])
