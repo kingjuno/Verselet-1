@@ -88,6 +88,7 @@ def user_profile():
                  'July', 'August', 'September', 'October', 'November', 'December']
         df2 = pd.read_csv('db.csv')
         pfp = f'static/{session["user"]}.png'
+        print(pfp)
         udb = pd.read_csv('User.csv')
         wins = df2[df2['Username'] == session['user']]['Wins'].values[0]
         games = df2[df2['Username'] == session['user']]['Games'].values[0]
@@ -95,9 +96,9 @@ def user_profile():
             if udb['User'].values[inx] == session['user']:
                 e_mail = udb['Email'][inx]; dob = udb['DOB'][inx]
             else: inx += 1
-        doby = dob[0:4]; dobd = dob[8:10]
-        if '0' == dob[5]: dobm = month[int(dob[6])]
-        else: dobm = month[int(dob[5:7])]
+        doby = dob.split('/')[2]
+        dobd = dob.split('/')[1]
+        dobm = month[int(dob.split('/')[0])]
         return render_template('profile.html', w=wins, pfp=pfp, g=games, u=session['user'], e=e_mail, d=dobd, m=dobm, y=doby)
     except:
         flash("Please login or create an account first")
