@@ -88,7 +88,6 @@ def user_profile():
                  'July', 'August', 'September', 'October', 'November', 'December']
         df2 = pd.read_csv('db.csv')
         pfp = f'static/{session["user"]}.png'
-        print(pfp)
         udb = pd.read_csv('User.csv')
         wins = df2[df2['Username'] == session['user']]['Wins'].values[0]
         games = df2[df2['Username'] == session['user']]['Games'].values[0]
