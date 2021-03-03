@@ -4,7 +4,9 @@ import pandas as pd
 from PIL import Image
 from ExtraStuff import decoder, encoder, resize
 from Models import Room, db
+
 # from werkzeug import secure_filename
+import json
 import os
 import string
 import random
@@ -68,7 +70,8 @@ def create_room():
         room = Room()
         link =  ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
         room.link=link
-        room.users= str(list(session["user"].split(",")))
+        room.users= json.dumps({"users": session["user"].split(" ")})
+        print(room.users)
         db.session.add(room)
         db.session.commit()
         return "The link to your room is: "+room.link
@@ -84,10 +87,12 @@ def rooom(link):
     if Room is None:
         abort(404)
     print(room.users)
-    users= list(room.users)
-    if session["user"] not in users:
-        users.append(session["user"])
-    room.users=str(users)
+    users= json.loads(room.users)
+    print(session["user"])
+    if session["user"] not in users["users"]:
+        users["users"].append(session["user"])
+    room.users = json.dumps(users)
+    print(room.users)
     db.session.commit()
     return f"Your room id is: {room.id}"
 
