@@ -30,8 +30,11 @@
 
 <form method="post">
     <textarea name="lang">Python 3</textarea>
-    <textarea id="w3review" name="code" rows="60" cols="100" placeholder="Type code here"></textarea>
+        <textarea id="w3review" name="code" rows="60" cols="100" placeholder="Type code here">{{c}}</textarea>
     <input type="submit">
 </form>
 
+Output : {{r}}
+</br>
+Errors : {{e}}
 {% endblock %}

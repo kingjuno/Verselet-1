@@ -16,8 +16,7 @@ app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rooms.db'
 # location for profile pics
-db.init_app(app)
-db.create_all(app=app)
+
 
 socketio.init_app(app)
 
@@ -165,8 +164,9 @@ def code():
         print(compiler(in_code, lang))
         print(in_code)
         result,errors = compiler(in_code, lang)
-        return result.replace("\n",'</br>'),errors
-    return render_template('compiling.html')
+        result = result.replace("\n", '\n')
+    return render_template('compiling.html', r=result, e=errors, c=in_code)
+
 
 @login_manager.user_loader
 @app.route('/about', methods=['POST', 'GET'])
