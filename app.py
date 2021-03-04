@@ -21,6 +21,7 @@ db.create_all(app=app)
 
 socketio.init_app(app)
 
+
 UPLOAD_FOLDER = "static/"
 login_manager = LoginManager()
 app.secret_key = 'ec52e5ead3899e4a0717b9806e1125de8af3bad84ca7f511'
@@ -94,9 +95,11 @@ def rooom(link):
     if Room is None:
         return abort(404)
     users= json.loads(room.users)
+    print(session["user"])
     if session["user"] not in users["users"]:
         users["users"].append(session["user"])
     room.users = json.dumps(users)
+    print(room.users)
     db.session.commit()
     return render_template("room.html", link=room.link)
 
@@ -161,8 +164,15 @@ def code():
         print(lang)
         print(compiler(in_code, lang))
         print(in_code)
-        return compiler(in_code, lang)[0].replace("\n",'</br>'),compiler(in_code, lang)[1]
+        result,errors = compiler(in_code, lang)
+        return result.replace("\n",'</br>'),errors
     return render_template('compiling.html')
+
+@login_manager.user_loader
+@app.route('/about', methods=['POST', 'GET'])
+def aboutus():
+    return render_template('about.html')
+
 
 @login_manager.user_loader
 @app.route('/settings', methods=['POST', 'GET'])
@@ -252,7 +262,8 @@ def settings_page():
             print(e)
             return render_template('login.html')
     else:
-        return render_template('login.html')
+        flash('hi User, you might wanna login first')
+        return redirect(url_for('login'))
 
 
 @app.after_request

@@ -1,15 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Code{% endblock %}
 
-<!DOCTYPE html>
-<html>
-<body>
+{% block content %}
 
-    <head>
+<style>
 
-    </head>
-    <form method="post">
-        <textarea name="lang">Python 3</textarea>
-    <textarea name="code">print('hi')</textarea>
+   body {
+    background-image: url({{ url_for('static', filename='dots.gif')}});
+  }
+
+    ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+::-webkit-scrollbar-track {
+    background: white;
+  }
+
+::-webkit-scrollbar-thumb {
+    background: #A44AA4;
+ }
+
+::-webkit-scrollbar-thumb:hover {
+    background: #813F81;
+ }
+
+</style>
+
+
+<form method="post">
+    <textarea name="lang">Python 3</textarea>
+    <textarea id="w3review" name="code" rows="60" cols="100" placeholder="Type code here"></textarea>
     <input type="submit">
-    </form>
-</body>
-</html>
+</form>
+
+{% endblock %}

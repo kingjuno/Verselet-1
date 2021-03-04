@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}About Us{% endblock %}
+
+{% block content %}
+
+<style>
+
+    @import url('https://fonts.googleapis.com/css2?family=Rubik&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@700&display=swap');
+
+    body {
+    background-image: url({{ url_for('static', filename='dots.gif')}});
+  }
+
+    .big_text {
+    margin: 3%;
+    color: white;
+    padding: 10px;
+    text-decoration: none;
+    font-family: 'Noto Sans', sans-serif;
+    font-size: 65px;
+  }
+</style>
+
+<div  style="text-align: center; color: white; font-family: 'Rubik', sans-serif;">
+
+    <div style="margin-bottom: 1%;" class="big_text">The <span style="color: #A44AA4; font-size: 70px;">V</span>erselet Team</div>
+    <div><b>Meet the SyntaEXE members<b></div>
+
+</div>
+
+{% endblock %}
