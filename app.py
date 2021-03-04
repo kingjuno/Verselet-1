@@ -4,19 +4,23 @@ import pandas as pd
 from PIL import Image
 from ExtraStuff import decoder, encoder, resize
 from Models import Room, db
-
+from websockets import socketio
 # from werkzeug import secure_filename
 import json
 import os
 import string
 import random
 from compling import *
+
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rooms.db'
 # location for profile pics
 db.init_app(app)
 db.create_all(app=app)
+
+socketio.init_app(app)
+
 UPLOAD_FOLDER = "static/"
 login_manager = LoginManager()
 app.secret_key = 'ec52e5ead3899e4a0717b9806e1125de8af3bad84ca7f511'
@@ -37,7 +41,7 @@ def page_not_found(e):
 @login_manager.user_loader
 @app.route('/')
 def front():
-    if 'user' in session: 
+    if 'user' in session:
         return render_template('homepage.html')
     else: return render_template('front.html')
 
@@ -56,10 +60,10 @@ def login():
                 return redirect(url_for('user_profile'))
             else:
                 flash('Incorrect username or password')
-                redirect(url_for('login'))
+                return render_template("login.html")
         except:
             flash('Incorrect username or password')
-            redirect(url_for('login'))
+            return redirect(url_for('login'))
     return render_template('login.html')
 
 
@@ -75,7 +79,7 @@ def create_room():
         print(room.users)
         db.session.add(room)
         db.session.commit()
-        return "The link to your room is: "+room.link
+        return redirect(f"/rooms/{room.link}")
 
     elif request.method == "GET" :
         # return website with button to
@@ -85,17 +89,17 @@ def create_room():
 @app.route("/rooms/<link>", methods=["POST","GET"])
 def rooom(link):
     room = Room.query.filter(Room.link == link).first()
+    print(room)
+    # check if room exists
     if Room is None:
-        abort(404)
-    print(room.users)
+        return abort(404)
     users= json.loads(room.users)
-    print(session["user"])
     if session["user"] not in users["users"]:
         users["users"].append(session["user"])
     room.users = json.dumps(users)
-    print(room.users)
     db.session.commit()
-    return f"Your room id is: {room.id}"
+    return render_template("room.html", link=room.link)
+
 
 @login_manager.user_loader
 @app.route('/register', methods=['POST', 'GET'])
@@ -261,4 +265,5 @@ def add_header(response):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    #app.run(debug=True)
+    socketio.run(app, debug=True)
