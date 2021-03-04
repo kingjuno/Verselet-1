@@ -15,8 +15,7 @@ app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rooms.db'
 # location for profile pics
-db.init_app(app)
-db.create_all(app=app)
+
 UPLOAD_FOLDER = "static/"
 login_manager = LoginManager()
 app.secret_key = 'ec52e5ead3899e4a0717b9806e1125de8af3bad84ca7f511'
@@ -157,7 +156,8 @@ def code():
         print(lang)
         print(compiler(in_code, lang))
         print(in_code)
-        return compiler(in_code, lang)[0].replace("\n",'</br>'),compiler(in_code, lang)[1]
+        result,errors = compiler(in_code, lang)
+        return result.replace("\n",'</br>'),errors[1]
     return render_template('compiling.html')
 
 @login_manager.user_loader
