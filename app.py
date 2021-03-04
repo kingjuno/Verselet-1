@@ -157,7 +157,7 @@ def code():
         print(compiler(in_code, lang))
         print(in_code)
         result,errors = compiler(in_code, lang)
-        return result.replace("\n",'</br>'),errors[1]
+        return result.replace("\n",'</br>'),errors
     return render_template('compiling.html')
 
 @login_manager.user_loader
@@ -254,7 +254,8 @@ def settings_page():
             print(e)
             return render_template('login.html')
     else:
-        return render_template('login.html')
+        flash('hi User, you might wanna login first')
+        return redirect(url_for('login'))
 
 
 @app.after_request
