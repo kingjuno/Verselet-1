@@ -4,17 +4,23 @@ import pandas as pd
 from PIL import Image
 from ExtraStuff import decoder, encoder, resize
 from Models import Room, db
-
+from websockets import socketio
 # from werkzeug import secure_filename
 import json
 import os
 import string
 import random
 from compling import *
+
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rooms.db'
 # location for profile pics
+db.init_app(app)
+db.create_all(app=app)
+
+socketio.init_app(app)
+
 
 UPLOAD_FOLDER = "static/"
 login_manager = LoginManager()
@@ -36,7 +42,7 @@ def page_not_found(e):
 @login_manager.user_loader
 @app.route('/')
 def front():
-    if 'user' in session: 
+    if 'user' in session:
         return render_template('homepage.html')
     else: return render_template('front.html')
 
@@ -55,10 +61,10 @@ def login():
                 return redirect(url_for('user_profile'))
             else:
                 flash('Incorrect username or password')
-                redirect(url_for('login'))
+                return render_template("login.html")
         except:
             flash('Incorrect username or password')
-            redirect(url_for('login'))
+            return redirect(url_for('login'))
     return render_template('login.html')
 
 
@@ -74,7 +80,7 @@ def create_room():
         print(room.users)
         db.session.add(room)
         db.session.commit()
-        return "The link to your room is: "+room.link
+        return redirect(f"/rooms/{room.link}")
 
     elif request.method == "GET" :
         # return website with button to
@@ -84,9 +90,10 @@ def create_room():
 @app.route("/rooms/<link>", methods=["POST","GET"])
 def rooom(link):
     room = Room.query.filter(Room.link == link).first()
+    print(room)
+    # check if room exists
     if Room is None:
-        abort(404)
-    print(room.users)
+        return abort(404)
     users= json.loads(room.users)
     print(session["user"])
     if session["user"] not in users["users"]:
@@ -94,7 +101,8 @@ def rooom(link):
     room.users = json.dumps(users)
     print(room.users)
     db.session.commit()
-    return f"Your room id is: {room.id}"
+    return render_template("room.html", link=room.link)
+
 
 @login_manager.user_loader
 @app.route('/register', methods=['POST', 'GET'])
@@ -157,8 +165,9 @@ def code():
         print(compiler(in_code, lang))
         print(in_code)
         result,errors = compiler(in_code, lang)
-        return result.replace("\n",'</br>'),errors[1]
-    return render_template('compiling.html')
+        result = result.replace("\n", '\n')
+    return render_template('compiling.html', r=result, e=errors, c=in_code)
+
 
 @login_manager.user_loader
 @app.route('/about', methods=['POST', 'GET'])
@@ -254,7 +263,8 @@ def settings_page():
             print(e)
             return render_template('login.html')
     else:
-        return render_template('login.html')
+        flash('hi User, you might wanna login first')
+        return redirect(url_for('login'))
 
 
 @app.after_request
@@ -267,4 +277,5 @@ def add_header(response):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    #app.run(debug=True)
+    socketio.run(app, debug=True)

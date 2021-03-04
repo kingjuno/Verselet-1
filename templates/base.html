@@ -112,7 +112,7 @@
 </style>
 
 <header style="background-color: #1d1d1d;">
-    <a class="logo" href="/"><img src="static/verse_l.png" alt="logo"></a>
+    <a class="logo" href="/"><img src="{{url_for('static', filename='verse_l.png')}}" alt="logo"></a>
     <nav>
         <ul class="nav__links">
             <li><a href="\">Home</a></li>
@@ -131,7 +131,7 @@
         </div>
     </div>
 </header>
-<script type="text/javascript" src="mobile.js"></script>
+<script type="text/javascript" src= {{url_for("static", filename="mobile.js")}}></script>
 <div class="pribbon"></div>
 
 <body>
