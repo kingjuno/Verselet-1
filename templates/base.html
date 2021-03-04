@@ -13,6 +13,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap');
 
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: white;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #A44AA4;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #813F81;
+}
+
 .banner{
      background-image: url({{ url_for('static', filename='dots.gif')}});
      text-align: center;
