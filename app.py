@@ -10,6 +10,7 @@ import json
 import os
 import string
 import random
+from compling import *
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rooms.db'
@@ -148,7 +149,16 @@ def user_profile():
     except:
         flash("Please login or create an account first")
         return redirect(url_for('login'))
-
+@app.route('/code', methods=['GET', 'POST'])
+def code():
+    if request.method == "POST":
+        in_code = request.form.get('code')
+        lang = request.form.get('lang')
+        print(lang)
+        print(compiler(in_code, lang))
+        print(in_code)
+        return compiler(in_code, lang)[0].replace("\n",'</br>'),compiler(in_code, lang)[1]
+    return render_template('compiling.html')
 
 @login_manager.user_loader
 @app.route('/settings', methods=['POST', 'GET'])
