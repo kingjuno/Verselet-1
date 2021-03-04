@@ -104,6 +104,12 @@ def user_profile():
 
 
 @login_manager.user_loader
+@app.route('/about', methods=['POST', 'GET'])
+def aboutus():
+    return render_template('about.html')
+
+
+@login_manager.user_loader
 @app.route('/settings', methods=['POST', 'GET'])
 def settings_page():
     if 'user' in session:
