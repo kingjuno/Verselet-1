@@ -1,18 +1,31 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, abort
 from flask_login import LoginManager, current_user, UserMixin
 import pandas as pd
 from PIL import Image
 from ExtraStuff import decoder, encoder, resize
-# from werkzeug import secure_filename
-import os
+from Models import Room, db
 
+# from werkzeug import secure_filename
+import json
+import os
+import string
+import random
+from compling import *
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rooms.db'
 # location for profile pics
+db.init_app(app)
+db.create_all(app=app)
 UPLOAD_FOLDER = "static/"
 login_manager = LoginManager()
 app.secret_key = 'ec52e5ead3899e4a0717b9806e1125de8af3bad84ca7f511'
 login_manager.init_app(app)
+
+def create_app():
+    app = Flask(__name__)
+    db.init_app(app)
+    return app
 
 
 
@@ -24,7 +37,8 @@ def page_not_found(e):
 @login_manager.user_loader
 @app.route('/')
 def front():
-    if 'user' in session: return render_template('homepage.html')
+    if 'user' in session: 
+        return render_template('homepage.html')
     else: return render_template('front.html')
 
 
@@ -48,6 +62,40 @@ def login():
             redirect(url_for('login'))
     return render_template('login.html')
 
+
+@login_manager.user_loader
+@app.route("/create",methods=["POST","GET"])
+def create_room():
+    if request.method == "POST":
+
+        room = Room()
+        link =  ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
+        room.link=link
+        room.users= json.dumps({"users": session["user"].split(" ")})
+        print(room.users)
+        db.session.add(room)
+        db.session.commit()
+        return "The link to your room is: "+room.link
+
+    elif request.method == "GET" :
+        # return website with button to
+        return "<form method=POST><button>Make room</button></form>"
+
+@login_manager.user_loader
+@app.route("/rooms/<link>", methods=["POST","GET"])
+def rooom(link):
+    room = Room.query.filter(Room.link == link).first()
+    if Room is None:
+        abort(404)
+    print(room.users)
+    users= json.loads(room.users)
+    print(session["user"])
+    if session["user"] not in users["users"]:
+        users["users"].append(session["user"])
+    room.users = json.dumps(users)
+    print(room.users)
+    db.session.commit()
+    return f"Your room id is: {room.id}"
 
 @login_manager.user_loader
 @app.route('/register', methods=['POST', 'GET'])
@@ -94,14 +142,23 @@ def user_profile():
             if udb['User'].values[inx] == session['user']:
                 e_mail = udb['Email'][inx]; dob = udb['DOB'][inx]
             else: inx += 1
-        doby = dob[0:4]; dobd = dob[8:10]
-        if '0' == dob[5]: dobm = month[int(dob[6])]
-        else: dobm = month[int(dob[5:7])]
+        doby = dob.split('/')[2]
+        dobd = dob.split('/')[1]
+        dobm = month[int(dob.split('/')[0])]
         return render_template('profile.html', w=wins, pfp=pfp, g=games, u=session['user'], e=e_mail, d=dobd, m=dobm, y=doby)
     except:
         flash("Please login or create an account first")
         return redirect(url_for('login'))
-
+@app.route('/code', methods=['GET', 'POST'])
+def code():
+    if request.method == "POST":
+        in_code = request.form.get('code')
+        lang = request.form.get('lang')
+        print(lang)
+        print(compiler(in_code, lang))
+        print(in_code)
+        return compiler(in_code, lang)[0].replace("\n",'</br>'),compiler(in_code, lang)[1]
+    return render_template('compiling.html')
 
 @login_manager.user_loader
 @app.route('/about', methods=['POST', 'GET'])

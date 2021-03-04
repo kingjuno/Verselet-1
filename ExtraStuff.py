@@ -21,4 +21,3 @@ def resize(path):
     im = Image.open(path)
     im= im.resize((64,64))
     im.save(path)  
-
