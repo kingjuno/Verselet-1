@@ -147,10 +147,19 @@ def user_profile():
         for i in udb['User']:
             if udb['User'].values[inx] == session['user']:
                 e_mail = udb['Email'][inx]; dob = udb['DOB'][inx]
+                print('email found')
             else: inx += 1
-        doby = dob.split('/')[2]
-        dobd = dob.split('/')[1]
-        dobm = month[int(dob.split('/')[0])]
+
+        # 2021-03-03
+
+        doby = dob[0:4]
+        if dob[5] == '0':
+            dobm = dob[6]
+        else: dobm = dob[5:6]
+        if dob[8] == '0':
+            dobd = dob[9]
+        else: dobd = dob[8:9]
+
         return render_template('profile.html', w=wins, pfp=pfp, g=games, u=session['user'], e=e_mail, d=dobd, m=dobm, y=doby)
     except:
         flash("Please login or create an account first")
