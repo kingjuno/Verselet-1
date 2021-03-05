@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from flask_login import LoginManager, current_user, UserMixin
 import pandas as pd
 from PIL import Image
-from ExtraStuff import decoder, encoder, resize
+from ExtraStuff import hash, resize
 from Models import Room, db
 from websockets import socketio
 # from werkzeug import secure_filename
@@ -55,7 +55,7 @@ def login():
         user = request.form.get("uname")
         password = request.form.get("psw")
         try:
-            if decoder(df[df['User'] == user]['Pass'].values[0]) == password:
+            if df[df['User'] == user]['Pass'].values[0] == hash(password):
                 session['user'] = user
                 return redirect(url_for('user_profile'))
             else:
@@ -110,7 +110,7 @@ def register():
         df = pd.read_csv('User.csv')
         email = request.form.get('email')
         user = request.form.get("uname")
-        password = encoder(request.form.get("psw"))
+        password = hash(request.form.get("psw"))
         dob = request.form.get('dob')
         if user in df.User.values:
             flash(f'An account with that username already exists.')
@@ -221,7 +221,7 @@ def settings_page():
                                 'emailedit') != "" or request.form.get('dob') != "" or request.form.get(
                                 'passedit') != "" or uploaded_file.filename != "":
                             # CHECK IF PASSWORD IS CORRECT
-                            if request.form.get('p') == decoder(df.Pass[inx]):
+                            if hash(f"{request.form.get('p')}") == df.Pass[inx]:
                                 index = 0
                                 # USERNAME EDIT
                                 if request.form.get('unameedit') != "":
@@ -262,7 +262,7 @@ def settings_page():
                                     resize(os.path.join(UPLOAD_FOLDER, i + '.png'))
                                 # PASSWORD EDIT
                                 if request.form.get('passedit') != "":
-                                    df.replace(to_replace=df.Pass[inx], value=encoder(request.form.get('passedit')),
+                                    df.replace(to_replace=df.Pass[inx], value=hash(request.form.get('passedit')),
                                                inplace=True)
                                     df.to_csv('User.csv', index=False)
                                 return render_template('homepage.html')
