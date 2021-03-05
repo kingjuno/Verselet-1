@@ -155,23 +155,23 @@ def user_profile():
     except:
         flash("Please login or create an account first")
         return redirect(url_for('login'))
+
 @app.route('/code', methods=['GET', 'POST'])
 def code():
     if request.method == "POST":
         in_code = request.form.get('code')
-        lang = request.form.get('lang')
-        print(lang)
-        if lang=='':
-            lang='Python 3'
-        print(compiler(in_code, lang))
-        print(in_code)
-        result,errors = compiler(in_code, lang)
+        lang = 'Python 3'
+        result, errors = compiler(in_code, lang)
         result = result.replace("\n", '\n')
     else:
         result=''
         in_code=''
         errors=''
-    return render_template('compiling.html', r=result, e=errors, c=in_code)
+    if errors != None and result == None :
+        return render_template('compiling.html', e=errors, c=in_code)
+    elif errors == None and result != None :
+        return render_template('compiling.html', r=result, c=in_code)
+    return render_template('compiling.html')
 
 
 @login_manager.user_loader
