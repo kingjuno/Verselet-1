@@ -39,31 +39,33 @@
 
 </style>
 
-<div style="text-align: center; color: white; font-family: 'Rubik', sans-serif;">
+<form style="overflow: visible;" method="POST" enctype = "multipart/form-data">
+    <div style="text-align: center; color: white; font-family: 'Rubik', sans-serif;">
 
-    <div style="margin-bottom: 1%;" class="big_text"><span style="color: #A44AA4; font-size: 70px;">C</span>ontact Us</div>
-    <div style="margin-bottom: -1.5%;" class="small_text"><b>This email will be sent to <span style="color: #A44AA4">syntaexe@gmail.com</span></b></div>
-    <div class="small_text"><b>A reply will be sent to the <span style="color: #A44AA4">email address</span> associated with this account.</b></div>
+        <div style="margin-bottom: 1%;" class="big_text"><span style="color: #A44AA4; font-size: 70px;">C</span>ontact Us</div>
+        <div style="margin-bottom: -1.5%;" class="small_text"><b>This email will be sent to <span style="color: #A44AA4">syntaexe@gmail.com</span></b></div>
+        <div class="small_text"><b>A reply will be sent to the <span style="color: #A44AA4">email address</span> associated with this account.</b></div>
 
-    <div class="column"  style="margin-left: 28%; font-family: 'Poppins', sans-serif; font-size: 20px;">
-        <br><label><b><span style="text-align: left; color: #A44AA4; font-size: 30px;">N</span>ame :</b></label>
-        <input style="width:250px; margin-left: 5%; float: right; border-radius: 25px; border: 2px solid #1d1d1d;" type="text" name="name" placeholder="Your Name"><br>
-        <br><label><b><span style="text-align: left; color: #A44AA4; font-size: 30px;">T</span>itle :</b></label>
-        <input style="width:250px; margin-left: 5%; float: right; border-radius: 25px; border: 2px solid #1d1d1d;" type="text" name="title" placeholder="Title"><br>
-        <br><label><b><span style="text-align: left; color: #A44AA4; font-size: 30px;">B</span>ody :</b></label>
-        <div class="row">
+        <div class="column"  style="margin-left: 28%; font-family: 'Poppins', sans-serif; font-size: 20px;">
+            <br><label><b><span style="text-align: left; color: #A44AA4; font-size: 30px;">N</span>ame :</b></label>
+            <input style="width:250px; margin-left: 5%; float: right; border-radius: 25px; border: 2px solid #1d1d1d;" type="text" name="name" placeholder="Your Name"><br>
+            <br><label><b><span style="text-align: left; color: #A44AA4; font-size: 30px;">T</span>itle :</b></label>
+            <input style="width:250px; margin-left: 5%; float: right; border-radius: 25px; border: 2px solid #1d1d1d;" type="text" name="title" placeholder="Title"><br>
+            <br><label><b><span style="text-align: left; color: #A44AA4; font-size: 30px;">B</span>ody :</b></label>
+            <div class="row">
 
-            <div class="column" style="margin-left: 20%; margin-top: -5%;">
-                <textarea style="border-radius: 25px; border: 2px solid #1d1d1d; resize: none;" spellcheck="false" name="code" rows="40" cols="100" placeholder="
-     Body">{{c}}</textarea>
+                <div class="column" style="margin-left: 20%; margin-top: -5%;">
+                    <textarea style="border-radius: 25px; border: 2px solid #1d1d1d; resize: none;" spellcheck="false" name="body" rows="40" cols="100" placeholder="
+         Body">{{c}}</textarea>
+                </div>
+
             </div>
+
+            <button style="font-size: 17px; font-family: 'Work Sans', sans-serif;" type="submit">Send</button>
 
         </div>
 
-        <button style="font-size: 17px; font-family: 'Work Sans', sans-serif;" type="submit">Confirm</button>
-
     </div>
-
-</div>
+</form>
 
 {% endblock %}

@@ -1,11 +1,13 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, abort
-from flask_login import LoginManager, current_user, UserMixin
+from flask_login import LoginManager
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import smtplib
 import pandas as pd
 from PIL import Image
 from ExtraStuff import resize, hashpass
 from Models import Room, db
 from websockets import socketio
-# from werkzeug import secure_filename
 import json
 import os
 import string
@@ -294,6 +296,38 @@ def settings_page():
 @app.route('/contact', methods=['POST', 'GET'])
 def contactus():
     if 'user' in session:
+        if request.method == 'POST':
+            df = pd.read_csv('User.csv'); index = 0
+            for i in df.User:
+                if i == session['user']:
+
+                    from_add = 'syntaexe@gmail.com'
+                    to_add = ['syntaexe@gmail.com']
+                    msg = MIMEMultipart()
+                    msg['From'] = from_add
+                    msg['To'] = ' ,'.join(to_add)
+
+                    msg['Subject'] = str(request.form.get('title'))
+                    body = f'From: {str(request.form.get("name"))} ({str(df.Email[index])}), {str(request.form.get("body"))}'
+                    msg.attach(MIMEText(body, 'plain'))
+
+                    email = 'syntaexe@gmail.com'
+                    password = 'syntaxexe'
+
+                    mail = smtplib.SMTP('smtp.gmail.com', 587)
+                    mail.ehlo()
+                    mail.starttls()
+                    mail.login(email, password)
+                    text = msg.as_string()
+                    mail.sendmail(from_add, to_add, text)
+                    mail.quit()
+
+                    print('sent')
+                    return redirect(url_for('front'))
+
+                else:
+                    index += 1
+
         return render_template('contact.html')
     else:
         flash('Please login first.')
@@ -302,7 +336,6 @@ def contactus():
 
 @app.after_request
 def add_header(response):
-    # response.cache_control.no_store = True
     response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0'
     response.headers['Pragma'] = 'no-cache'
     response.headers['Expires'] = '-1'
