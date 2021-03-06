@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from flask_login import LoginManager, current_user, UserMixin
 import pandas as pd
 from PIL import Image
-from ExtraStuff import hash, resize
+from ExtraStuff import resize, hashpass
 from Models import Room, db
 from websockets import socketio
 # from werkzeug import secure_filename
@@ -20,17 +20,16 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rooms.db'
 
 socketio.init_app(app)
 
-
 UPLOAD_FOLDER = "static/"
 login_manager = LoginManager()
 app.secret_key = 'ec52e5ead3899e4a0717b9806e1125de8af3bad84ca7f511'
 login_manager.init_app(app)
 
+
 def create_app():
     app = Flask(__name__)
     db.init_app(app)
     return app
-
 
 
 @app.errorhandler(404)
@@ -55,7 +54,9 @@ def login():
         user = request.form.get("uname")
         password = request.form.get("psw")
         try:
-            if df[df['User'] == user]['Pass'].values[0] == hash(password):
+            print(hashpass(password))
+            print(df[df['User'] == user]['Pass'].values[0])
+            if df[df['User'] == user]['Pass'].values[0] == hashpass(password):
                 session['user'] = user
                 return redirect(url_for('user_profile'))
             else:
@@ -73,9 +74,9 @@ def create_room():
     if request.method == "POST":
 
         room = Room()
-        link =  ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
-        room.link=link
-        room.users= json.dumps({"users": session["user"].split(" ")})
+        link = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
+        room.link = link
+        room.users = json.dumps({"users": session["user"].split(" ")})
         print(room.users)
         db.session.add(room)
         db.session.commit()
@@ -110,7 +111,7 @@ def register():
         df = pd.read_csv('User.csv')
         email = request.form.get('email')
         user = request.form.get("uname")
-        password = hash(request.form.get("psw"))
+        password = hashpass(request.form.get("psw"))
         dob = request.form.get('dob')
         if user in df.User.values:
             flash(f'An account with that username already exists.')
@@ -147,15 +148,14 @@ def user_profile():
         for i in udb['User']:
             if udb['User'].values[inx] == session['user']:
                 e_mail = udb['Email'][inx]; dob = udb['DOB'][inx]
-                print('email found')
             else: inx += 1
 
         # 2021-03-03
 
         doby = dob[0:4]
         if dob[5] == '0':
-            dobm = dob[6]
-        else: dobm = dob[5:6]
+            dobm = month[int(dob[6])]
+        else: dobm = month[int(dob[5:6])]
         if dob[8] == '0':
             dobd = dob[9]
         else: dobd = dob[8:9]
@@ -221,10 +221,12 @@ def settings_page():
                                 'emailedit') != "" or request.form.get('dob') != "" or request.form.get(
                                 'passedit') != "" or uploaded_file.filename != "":
                             # CHECK IF PASSWORD IS CORRECT
-                            if hash(f"{request.form.get('p')}") == df.Pass[inx]:
+                            if hashpass(request.form.get('p')) == df.Pass[inx]:
+                                print('password is correct')
                                 index = 0
                                 # USERNAME EDIT
                                 if request.form.get('unameedit') != "":
+                                    print('username is filled')
                                     if request.form.get('unameedit') in list(df.User):
                                         flash("Username already taken")
                                         settings_page()
@@ -233,19 +235,24 @@ def settings_page():
                                         df.replace(to_replace=df.User[inx], value=request.form.get('unameedit'),
                                                    inplace=True)
                                         df.to_csv('User.csv', index=False)
+                                        print('replaced username in db')
                                         for j in ud.Username:
                                             if j == session['user']:
                                                 ud.replace(to_replace=ud.Username[inx],
                                                            value=request.form.get('unameedit'),
                                                            inplace=True)
                                                 ud.to_csv('db.csv', index=False)
+                                                print('replaced username in user_db')
                                                 os.rename('static/' + session['user'] + '.png',
                                                           'static/' + request.form.get('unameedit') + '.png')
+                                                print('changed pfp name')
                                                 session['user'] = request.form.get('unameedit')
+                                                print('session user set')
                                             else:
                                                 index += 1
                                 # EMAIL EDIT
                                 if request.form.get('emailedit') != "":
+                                    print('email is filled')
                                     if request.form.get('emailedit') in list(df.Email):
                                         flash("An account with this email address already exists")
                                         settings_page()
@@ -254,17 +261,20 @@ def settings_page():
                                         df.replace(to_replace=df.Email[inx], value=request.form.get('emailedit'),
                                                    inplace=True)
                                         df.to_csv('User.csv', index=False)
+                                        print('email is replaced')
                                 # PROFILE PICTURE EDIT
-                                if uploaded_file.filename != " ":
+                                if uploaded_file.filename != "":
                                     os.remove(UPLOAD_FOLDER + session['user'] + '.png')
                                     uploaded_file.save(os.path.join(UPLOAD_FOLDER, i + '.png'))
                                     # Resize profile pic to 64x64
                                     resize(os.path.join(UPLOAD_FOLDER, i + '.png'))
                                 # PASSWORD EDIT
                                 if request.form.get('passedit') != "":
-                                    df.replace(to_replace=df.Pass[inx], value=hash(request.form.get('passedit')),
+                                    print('password needs change')
+                                    df.replace(to_replace=df.Pass[inx], value=hashpass(request.form.get('passedit')),
                                                inplace=True)
                                     df.to_csv('User.csv', index=False)
+                                    print('changed pass')
                                 return render_template('homepage.html')
                             else:
                                 flash('Incorrect password')
@@ -273,11 +283,10 @@ def settings_page():
                         inx += 1
                 return render_template('homepage.html')
             return render_template('settingspage.html', w=wins, g=games, u=session['user'], e=e_mail, d=dob)
-        except Exception as e:
-            print(e)
+        except Exception:
             return render_template('login.html')
     else:
-        flash('hi User, you might wanna login first')
+        flash('Please login first.')
         return redirect(url_for('login'))
 
 
