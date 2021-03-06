@@ -281,6 +281,16 @@ def settings_page():
         return redirect(url_for('login'))
 
 
+@login_manager.user_loader
+@app.route('/contact', methods=['POST', 'GET'])
+def contactus():
+    if 'user' in session:
+        return render_template('contact.html')
+    else:
+        flash('Please login first.')
+        return redirect('/login')
+
+
 @app.after_request
 def add_header(response):
     # response.cache_control.no_store = True
