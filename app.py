@@ -56,8 +56,6 @@ def login():
         user = request.form.get("uname")
         password = request.form.get("psw")
         try:
-            print(hashpass(password))
-            print(df[df['User'] == user]['Pass'].values[0])
             if df[df['User'] == user]['Pass'].values[0] == hashpass(password):
                 session['user'] = user
                 return redirect(url_for('user_profile'))
