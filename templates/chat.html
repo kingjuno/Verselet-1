@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Chat{% endblock %}
+
+{% block content %}
+
+<style>
+
+  body{
+    background-image: url({{ url_for('static', filename='dot_blue.gif')}});
+    background-size: cover;
+  }
+</style>
+
+
+<div id="main-section">
+    <nav id="sidebar">
+
+    </nav>
+    <div class="inpput-are">
+        <input type="text" id="user_message" autocomplete="off" placeholder="type here">
+        <button type="button" id="send_message">Send Message</button>
+    </div>
+</div>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+<script type="text/javascript" charset="utf-8">
+    var socket = io();
+    socket.on('connect', function() {
+        socket.send("Connected");
+        console.log("User is Connected");
+    });
+
+    socket.on('message', data => {
+        console.log(`Message received : ${data}`);
+    });
+
+    socket.on('event', data => {
+        console.log(data);
+    });
+
+</script>
+
+
+
+{% endblock %}

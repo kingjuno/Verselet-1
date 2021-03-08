@@ -7,7 +7,7 @@ import pandas as pd
 from PIL import Image
 from ExtraStuff import resize, hashpass
 from Models import Room, db
-from websockets import socketio
+from websockets import socketio, send, emit
 import json
 import os
 import string
@@ -17,8 +17,6 @@ from compling import *
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rooms.db'
-# location for profile pics
-
 
 socketio.init_app(app)
 
@@ -67,41 +65,6 @@ def login():
             return redirect(url_for('login'))
     return render_template('login.html')
 
-
-@login_manager.user_loader
-@app.route("/create",methods=["POST","GET"])
-def create_room():
-    if request.method == "POST":
-
-        room = Room()
-        link = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
-        room.link = link
-        room.users = json.dumps({"users": session["user"].split(" ")})
-        print(room.users)
-        db.session.add(room)
-        db.session.commit()
-        return redirect(f"/rooms/{room.link}")
-
-    elif request.method == "GET" :
-        # return website with button to
-        return "<form method=POST><button>Make room</button></form>"
-
-@login_manager.user_loader
-@app.route("/rooms/<link>", methods=["POST","GET"])
-def rooom(link):
-    room = Room.query.filter(Room.link == link).first()
-    print(room)
-    # check if room exists
-    if Room is None:
-        return abort(404)
-    users= json.loads(room.users)
-    print(session["user"])
-    if session["user"] not in users["users"]:
-        users["users"].append(session["user"])
-    room.users = json.dumps(users)
-    print(room.users)
-    db.session.commit()
-    return render_template("room.html", link=room.link)
 
 
 @login_manager.user_loader
@@ -173,9 +136,7 @@ def code():
         result, errors = compiler(in_code, lang)
         result = result.replace("\n", '\n')
     else:
-        result=''
-        in_code=''
-        errors=''
+        result = ''; in_code = ''; errors = ''
     if errors != None and result == None :
         return render_template('compiling.html', e=errors, c=in_code)
     elif errors == None and result != None :
@@ -332,14 +293,22 @@ def contactus():
         return redirect('/login')
 
 
-@app.after_request
-def add_header(response):
-    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0'
-    response.headers['Pragma'] = 'no-cache'
-    response.headers['Expires'] = '-1'
-    return response
+@app.route('/chat', methods=['GET', 'POST'])
+def chat():
+
+    if 'user' in session:
+        return render_template('chat.html')
+    else:
+        flash("Please log in")
+        return redirect(url_for('login'))
+
+
+@socketio.on('message')
+def message(data):
+    print(f'\n\n{data}\n\n')
+    send(data)
+    emit('event', 'this is a custom event')
 
 
 if __name__ == '__main__':
-    #app.run(debug=True)
     socketio.run(app, debug=True)
