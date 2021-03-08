@@ -132,7 +132,7 @@ def user_profile():
 def code():
     if request.method == "POST":
         in_code = request.form.get('code')
-        lang = 'Python 3'
+        lang = request.form.get('lang')
         result, errors = compiler(in_code, lang)
         result = result.replace("\n", '\n')
     else:
