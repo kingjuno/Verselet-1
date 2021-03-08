@@ -297,7 +297,7 @@ def contactus():
 def chat():
 
     if 'user' in session:
-        return render_template('chat.html')
+        return render_template('chat.html', u=session['user'])
     else:
         flash("Please log in")
         return redirect(url_for('login'))
@@ -307,7 +307,6 @@ def chat():
 def message(data):
     print(f'\n\n{data}\n\n')
     send(data)
-    emit('event', 'this is a custom event')
 
 
 if __name__ == '__main__':
