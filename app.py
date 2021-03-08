@@ -7,7 +7,7 @@ import pandas as pd
 from PIL import Image
 from ExtraStuff import resize, hashpass
 from Models import Room, db
-from websockets import socketio, send, emit
+from websockets import socketio, send, emit, join_room, leave_room
 import json
 import os
 import string
@@ -19,6 +19,7 @@ app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rooms.db'
 
 socketio.init_app(app)
+ROOMS = ['play', 'coding', 'challenge', 'rank']
 
 UPLOAD_FOLDER = "static/"
 login_manager = LoginManager()
@@ -297,7 +298,7 @@ def contactus():
 def chat():
 
     if 'user' in session:
-        return render_template('chat.html', u=session['user'])
+        return render_template('chat.html', u=session['user'], rooms=ROOMS)
     else:
         flash("Please log in")
         return redirect(url_for('login'))
@@ -308,6 +309,17 @@ def message(data):
     print(f'\n\n{data}\n\n')
     send(data)
 
+
+@socketio.on('join')
+def join(data):
+    join_room(data['room'])
+    send({'msg': data['username'] + " has joined " + data['room']}, room=data['room'])
+
+
+@socketio.on('leave')
+def leave(data):
+    leave_room(data['room'])
+    send({'msg': data['username'] + " has left " + data['room']}, room=data['room'])
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)

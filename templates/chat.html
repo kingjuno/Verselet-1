@@ -14,7 +14,10 @@
 
 <div id="main-section">
     <nav id="sidebar">
-
+        <h4>Rooms</h4>
+        {% for room in rooms %}
+            <p class="roomsel">{{ room|title }}</p>
+        {% endfor %}
     </nav>
     <div id="show" style="color: white;"></div>
     <div class="input-area">
@@ -37,11 +40,7 @@
         us.innerHTML = data.u;
         p.innerHTML = us.outerHTML + br.outerHTML + data.msg + br.outerHTML;
         document.querySelector('#show').append(p);
-        console.log(`Message received : ${data}`);
-    });
-
-    socket.on('event', data => {
-        console.log(data);
+        console.log(`Message received : ${us.innerHTML} sent ${data.msg}.`);
     });
 
     document.querySelector('#send').onclick = () => {
