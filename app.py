@@ -132,7 +132,7 @@ def user_profile():
 @app.route('/code', methods=['GET', 'POST'])
 def code():
     if request.method == "POST":
-        in_code = request.form.get('code')
+        in_code = request.form.get('input')
         lang = request.form.get('lang')
         result, errors = compiler(in_code, lang)
         result = result.replace("\n", '\n')
@@ -294,11 +294,11 @@ def contactus():
         return redirect('/login')
 
 
-@app.route('/chat', methods=['GET', 'POST'])
+@app.route('/play', methods=['GET', 'POST'])
 def chat():
 
     if 'user' in session:
-        return render_template('chat.html', u=session['user'], rooms=ROOMS)
+        return render_template('play.html', u=session['user'], rooms=ROOMS)
     else:
         flash("Please log in")
         return redirect(url_for('login'))
