@@ -25,6 +25,7 @@ UPLOAD_FOLDER = "static/"
 login_manager = LoginManager()
 app.secret_key = 'ec52e5ead3899e4a0717b9806e1125de8af3bad84ca7f511'
 login_manager.init_app(app)
+room_links = []
 
 
 def create_app():
@@ -39,10 +40,22 @@ def page_not_found(e):
 
 
 @login_manager.user_loader
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def front():
     if 'user' in session:
+        if request.method == "POST":
+            link = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
+            room_links.append(link)
+            for i in room_links:
+                if i == link:
+                    room_links.remove(link)
+                    link = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
+                    room_links.append(link)
+            print(room_links)
+            return redirect(f"/play/{link}")
         return render_template('homepage.html')
+
+
     else: return render_template('front.html')
 
 
@@ -295,7 +308,7 @@ def contactus():
 
 
 @app.route('/play', methods=['GET', 'POST'])
-def chat():
+def play():
 
     if 'user' in session:
         return render_template('play.html', u=session['user'], rooms=ROOMS)
@@ -320,6 +333,35 @@ def join(data):
 def leave(data):
     leave_room(data['room'])
     send({'msg': data['username'] + " has left " + data['room']}, room=data['room'])
+
+
+@app.route(f'/play/<roomlink>', methods=['GET', 'POST'])
+def room(roomlink):
+    if 'user' in session:
+        for i in room_links:
+            print(i)
+            if i == roomlink:
+                if request.method == "POST":
+                    in_code = request.form.get('input')
+                    lang = request.form.get('lang')
+                    result, errors = compiler(in_code, lang)
+                    result = result.replace("\n", '\n')
+                else:
+                    result = ''
+                    in_code = ''
+                    errors = ''
+                if errors != None and result == None:
+                    return render_template('compiling.html', e=errors, c=in_code)
+                elif errors == None and result != None:
+                    return render_template('compiling.html', r=result, c=in_code)
+                return render_template('compiling.html', u=session['user'], rooms=ROOMS)
+        else:
+            return render_template('404.html')
+    else:
+        flash("Please log in")
+        return redirect(url_for('login'))
+
+
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
