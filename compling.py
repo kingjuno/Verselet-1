@@ -15,6 +15,5 @@ def compiler(code,lang):
     }
     output = requests.post(url, data=to_compile)
     output = output.json()
-    print(output['Result'])
     return output['Result'],output['Errors']
 #print(compiler('print("hi")','Python 3'))
