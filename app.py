@@ -151,7 +151,7 @@ def code():
         result = result.replace("\n", '\n')
     else:
         result = ''; in_code = ''; errors = ''
-    if errors != None and result == None :
+    if errors != None:
         return render_template('compiling.html', e=errors, c=in_code)
     elif errors == None and result != None :
         return render_template('compiling.html', r=result, c=in_code)
