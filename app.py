@@ -21,7 +21,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rooms.db'
 socketio.init_app(app)
 ROOMS = ['play', 'coding', 'challenge', 'rank']
 
-UPLOAD_FOLDER = "static/"
+UPLOAD_FOLDER = "static/pfps/"
 login_manager = LoginManager()
 app.secret_key = 'ec52e5ead3899e4a0717b9806e1125de8af3bad84ca7f511'
 login_manager.init_app(app)
@@ -104,8 +104,8 @@ def register():
             df2.to_csv('db.csv', index=False)
             df.to_csv('User.csv', index=False)
             session['user'] = user
-            im1 = Image.open('static/base.png')
-            im1.save(f'static/{user}.png')
+            im1 = Image.open('static/pfps/base.png')
+            im1.save(f'static/pfps/{user}.png')
             return redirect(url_for('front'))
     return render_template('register.html')
 
@@ -118,7 +118,7 @@ def user_profile():
         month = ['empty', 'January', 'February', 'March', 'April', 'May', 'June',
                  'July', 'August', 'September', 'October', 'November', 'December']
         df2 = pd.read_csv('db.csv')
-        pfp = f'static/{session["user"]}.png'
+        pfp = f'static/pfps/{session["user"]}.png'
         udb = pd.read_csv('User.csv')
         wins = df2[df2['Username'] == session['user']]['Wins'].values[0]
         games = df2[df2['Username'] == session['user']]['Games'].values[0]
@@ -218,8 +218,8 @@ def settings_page():
                                                            inplace=True)
                                                 ud.to_csv('db.csv', index=False)
                                                 print('replaced username in user_db')
-                                                os.rename('static/' + session['user'] + '.png',
-                                                          'static/' + request.form.get('unameedit') + '.png')
+                                                os.rename('static/pfps/' + session['user'] + '.png',
+                                                          'static/pfps/' + request.form.get('unameedit') + '.png')
                                                 print('changed pfp name')
                                                 session['user'] = request.form.get('unameedit')
                                                 print('session user set')
