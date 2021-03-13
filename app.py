@@ -339,7 +339,6 @@ def leave(data):
 def room(roomlink):
     if 'user' in session:
         for i in room_links:
-            print(i)
             if i == roomlink:
                 if request.method == "POST":
                     in_code = request.form.get('input')
