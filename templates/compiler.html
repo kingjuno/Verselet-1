@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% block title %}Code{% endblock %}
+
+{% block content %}
+
+<style>
+
+   body {
+    background-image: url({{ url_for('static', filename='dots.gif')}});
+  }
+
+    ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+::-webkit-scrollbar-track {
+    background: white;
+  }
+
+::-webkit-scrollbar-thumb {
+    background: #A44AA4;
+ }
+
+::-webkit-scrollbar-thumb:hover {
+    background: #813F81;
+ }
+
+ .small_text {
+    margin: 3%;
+    color: #D1D1D1;
+    text-decoration: none;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 15px;
+  }
+
+</style>
+
+
+<form method="post">
+
+    <div class="row" style="margin-left: 5%;">
+
+        <div class="column" style="margin-top: 1.5%; margin-left: -3%;">
+            <textarea style="color: white; background-color: #222222; margin-left: 3%; margin-bottom: 10%; resize: none;" name="lang">Python 3</textarea>
+            <button style="font-size: 17px; font-family: 'Work Sans', sans-serif; width: 18%; margin-left: -19%;" id="sub">Submit Code</button><br>
+            <button style="font-size: 17px; font-family: 'Work Sans', sans-serif; width: 18%; margin-left: 3%;" type="submit">Run Code</button>
+            <div class="small_text">The room's code is : <span style="color: #A44AA4"><br>{{ link }}</span></div>
+        </div>
+        <div class="column">
+
+
+            <div class="column" style="margin-left: -80%; width: 180%;">
+
+                <textarea style="margin-top: 1%; margin-right: 10%; width: 50%; color: white; background-color: #222222; resize: none;" spellcheck="false" name="input" id="e" rows="60" cols="100" placeholder="Enter code here">{{c}}</textarea>
+
+            </div>
+
+            <div class="column" style="margin-top: -4%; margin-left: -80%; width: 180%;">
+                <textarea style="width: 50%; margin-top: -65%; margin-left: 54%; color: white; background-color: #222222; resize: none;" spellcheck="false" id="o" name="out" rows="60" cols="100" placeholder="Output" readonly>{{r}}{{e}}</textarea>
+            </div>
+
+        </div>
+
+    </div>
+
+</form>
+
+<script>
+document.getElementById('e').addEventListener('keydown', function(e) {
+  if (e.key == 'Tab') {
+    e.preventDefault();
+    var start = this.selectionStart;
+    var end = this.selectionEnd;
+
+    // set textarea value to: text before caret + tab + text after caret
+    this.value = this.value.substring(0, start) +
+      "\t" + this.value.substring(end);
+
+    // put caret at right position again
+    this.selectionStart =
+      this.selectionEnd = start + 1;
+  }
+});
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+
+	var socket = io.connect('http://127.0.0.1:5000');
+
+	socket.on('connect', function() {
+		socket.send('User has connected!');
+	});
+
+	socket.on('message', function(msg) {
+		console.log(msg);
+	});
+
+	$('#sub').on('click', function() {
+		console.log($('#e').val());
+	});
+
+});
+</script>
+
+{% endblock %}

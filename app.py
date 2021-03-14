@@ -19,7 +19,6 @@ app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rooms.db'
 
 socketio.init_app(app)
-ROOMS = ['play', 'coding', 'challenge', 'rank']
 
 UPLOAD_FOLDER = "static/"
 login_manager = LoginManager()
@@ -44,17 +43,19 @@ def page_not_found(e):
 def front():
     if 'user' in session:
         if request.method == "POST":
-            link = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
-            room_links.append(link)
-            for i in room_links:
-                if i == link:
-                    room_links.remove(link)
-                    link = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
-                    room_links.append(link)
-            print(room_links)
-            return redirect(f"/play/{link}")
+            if request.form['x'] == 'create':
+                link = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
+                room_links.append(link)
+                for i in room_links:
+                    if i == link:
+                        room_links.remove(link)
+                        link = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
+                        room_links.append(link)
+                return redirect(f"/play/{link}")
+            elif request.form['x'] == 'search':
+                print(request.form.get('join'))
+                return redirect(f"play/{request.form.get('join')}")
         return render_template('homepage.html')
-
 
     else: return render_template('front.html')
 
@@ -142,6 +143,7 @@ def user_profile():
         flash("Please login or create an account first")
         return redirect(url_for('login'))
 
+
 @app.route('/code', methods=['GET', 'POST'])
 def code():
     if request.method == "POST":
@@ -173,8 +175,6 @@ def settings_page():
             # PASSING ALL INFO TO DISPLAY
 
             dob = ''; e_mail = ''; inx = 0
-            month = ['empty', 'January', 'February', 'March', 'April', 'May', 'June',
-                     'July', 'August', 'September', 'October', 'November', 'December']
             df2 = pd.read_csv('db.csv')
             udb = pd.read_csv('User.csv')
             wins = df2[df2['Username'] == session['user']]['Wins'].values[0]
@@ -307,34 +307,6 @@ def contactus():
         return redirect('/login')
 
 
-@app.route('/play', methods=['GET', 'POST'])
-def play():
-
-    if 'user' in session:
-        return render_template('play.html', u=session['user'], rooms=ROOMS)
-    else:
-        flash("Please log in")
-        return redirect(url_for('login'))
-
-
-@socketio.on('message')
-def message(data):
-    print(f'\n\n{data}\n\n')
-    send(data)
-
-
-@socketio.on('join')
-def join(data):
-    join_room(data['room'])
-    send({'msg': data['username'] + " has joined " + data['room']}, room=data['room'])
-
-
-@socketio.on('leave')
-def leave(data):
-    leave_room(data['room'])
-    send({'msg': data['username'] + " has left " + data['room']}, room=data['room'])
-
-
 @app.route(f'/play/<roomlink>', methods=['GET', 'POST'])
 def room(roomlink):
     if 'user' in session:
@@ -346,20 +318,31 @@ def room(roomlink):
                     result, errors = compiler(in_code, lang)
                     result = result.replace("\n", '\n')
                 else:
-                    result = ''
-                    in_code = ''
-                    errors = ''
-                if errors != None and result == None:
-                    return render_template('compiling.html', e=errors, c=in_code)
+                    result = ''; in_code = ''; errors = ''
+                if errors != None:
+                    return render_template('compiler.html', e=errors, c=in_code, link=roomlink)
                 elif errors == None and result != None:
-                    return render_template('compiling.html', r=result, c=in_code)
-                return render_template('compiling.html', u=session['user'], rooms=ROOMS)
+                    return render_template('compiler.html', r=result, c=in_code, link=roomlink)
+                return render_template('compiler.html', u=session['user'], link=roomlink)
         else:
             return render_template('404.html')
     else:
         flash("Please log in")
         return redirect(url_for('login'))
 
+
+@app.route('/page', methods=['GET', 'POST'])
+def page():
+    return render_template('page.html')
+
+
+@socketio.on('message')
+def handleMessage(msg):
+    print('Message: ' + msg)
+    if msg == 'User has connected!':
+        send('System : ' + msg, broadcast=True)
+    else:
+        send(session['user'] + ' ' + msg, broadcast=True)
 
 
 if __name__ == '__main__':
