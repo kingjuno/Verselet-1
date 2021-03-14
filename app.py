@@ -20,7 +20,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rooms.db'
 
 socketio.init_app(app)
 
-UPLOAD_FOLDER = "static/"
+UPLOAD_FOLDER = "static/pfps/"
 login_manager = LoginManager()
 app.secret_key = 'ec52e5ead3899e4a0717b9806e1125de8af3bad84ca7f511'
 login_manager.init_app(app)
@@ -45,12 +45,13 @@ def front():
         if request.method == "POST":
             if request.form['x'] == 'create':
                 link = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
-                room_links.append(link)
+                room_links.append([link])
                 for i in room_links:
                     if i == link:
                         room_links.remove(link)
                         link = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
-                        room_links.append(link)
+                        room_links.append([link])
+                print(room_links)
                 return redirect(f"/play/{link}")
             elif request.form['x'] == 'search':
                 print(request.form.get('join'))
@@ -105,8 +106,8 @@ def register():
             df2.to_csv('db.csv', index=False)
             df.to_csv('User.csv', index=False)
             session['user'] = user
-            im1 = Image.open('static/base.png')
-            im1.save(f'static/{user}.png')
+            im1 = Image.open('static/pfps/base.png')
+            im1.save(f'static/pfps/{user}.png')
             return redirect(url_for('front'))
     return render_template('register.html')
 
@@ -119,7 +120,7 @@ def user_profile():
         month = ['empty', 'January', 'February', 'March', 'April', 'May', 'June',
                  'July', 'August', 'September', 'October', 'November', 'December']
         df2 = pd.read_csv('db.csv')
-        pfp = f'static/{session["user"]}.png'
+        pfp = f'static/pfps/{session["user"]}.png'
         udb = pd.read_csv('User.csv')
         wins = df2[df2['Username'] == session['user']]['Wins'].values[0]
         games = df2[df2['Username'] == session['user']]['Games'].values[0]
@@ -218,8 +219,8 @@ def settings_page():
                                                            inplace=True)
                                                 ud.to_csv('db.csv', index=False)
                                                 print('replaced username in user_db')
-                                                os.rename('static/' + session['user'] + '.png',
-                                                          'static/' + request.form.get('unameedit') + '.png')
+                                                os.rename('static/pfps/' + session['user'] + '.png',
+                                                          'static/pfps/' + request.form.get('unameedit') + '.png')
                                                 print('changed pfp name')
                                                 session['user'] = request.form.get('unameedit')
                                                 print('session user set')
@@ -309,9 +310,14 @@ def contactus():
 
 @app.route(f'/play/<roomlink>', methods=['GET', 'POST'])
 def room(roomlink):
+    listq = [x for x in pd.read_csv('questions.csv')['Questions']]
     if 'user' in session:
+        index = 0
         for i in room_links:
-            if i == roomlink:
+            if i[0] == roomlink:
+                print(":)")
+                room_links[index].append(random.choice(listq))
+                print(room_links)    
                 if request.method == "POST":
                     in_code = request.form.get('input')
                     lang = request.form.get('lang')
@@ -320,20 +326,17 @@ def room(roomlink):
                 else:
                     result = ''; in_code = ''; errors = ''
                 if errors != None:
-                    return render_template('compiler.html', e=errors, c=in_code, link=roomlink)
+                    return render_template('compiler.html', e=errors, c=in_code, link=roomlink, que=room_links[index][1])
                 elif errors == None and result != None:
-                    return render_template('compiler.html', r=result, c=in_code, link=roomlink)
-                return render_template('compiler.html', u=session['user'], link=roomlink)
+                    return render_template('compiler.html', r=result, c=in_code, link=roomlink, que=room_links[index][1])
+                return render_template('compiler.html', u=session['user'], link=roomlink, que=room_links[index][1])
+            else:
+                index += 1
         else:
             return render_template('404.html')
     else:
         flash("Please log in")
         return redirect(url_for('login'))
-
-
-@app.route('/page', methods=['GET', 'POST'])
-def page():
-    return render_template('page.html')
 
 
 @socketio.on('message')
