@@ -3,6 +3,7 @@ from flask_login import LoginManager
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib
+import solution
 import pandas as pd
 from PIL import Image
 from ExtraStuff import resize, hashpass
@@ -12,8 +13,8 @@ import json
 import os
 import string
 import random
-import solution
 from compling import *
+
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rooms.db'
@@ -26,6 +27,7 @@ login_manager = LoginManager()
 app.secret_key = 'ec52e5ead3899e4a0717b9806e1125de8af3bad84ca7f511'
 login_manager.init_app(app)
 room_links = []
+
 
 def create_app():
     app = Flask(__name__)
@@ -143,11 +145,10 @@ def user_profile():
 
 @app.route('/code', methods=['GET', 'POST'])
 def code():
-    i=10
     if request.method == "POST":
         in_code = request.form.get('input')
         lang = request.form.get('lang')
-        result, errors = compiler(in_code, lang,i)
+        result, errors = compiler(in_code, lang)
         result = result.replace("\n", '\n')
     else:
         result = ''; in_code = ''; errors = ''
@@ -340,7 +341,7 @@ def room(roomlink):
     if 'user' in session:
         for i in room_links:
             if i == roomlink:
-                q='10'
+                q=random.randint(0,100)
                 if request.method == "POST":
                     in_code = request.form.get('input')
                     lang = request.form.get('lang')
@@ -353,11 +354,8 @@ def room(roomlink):
                 if errors != None and result == None:
                     return render_template('compiling.html', e=errors, c=in_code)
                 elif errors == None and result != None:
-                    print(result)
-                    print(solution.solution(q))
-                    print(result == solution.solution(q))
-                    return render_template('compiling.html', r=result, c=in_code,q=f'result :{int(result) == int(solution.solution(q))}')
-                return render_template('compiling.html', u=session['user'], rooms=ROOMS)
+                    return render_template('compiling.html', r=result, c=in_code)
+                return render_template('compiling.html', u=session['user'], rooms=ROOMS,q=f'result :{int(result) == int(solution.solution(q))}')
         else:
             return render_template('404.html')
     else:
