@@ -20,7 +20,6 @@ app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rooms.db'
 
 socketio.init_app(app)
-ROOMS = ['play', 'coding', 'challenge', 'rank']
 
 UPLOAD_FOLDER = "static/pfps/"
 login_manager = LoginManager()
@@ -45,19 +44,23 @@ def page_not_found(e):
 def front():
     if 'user' in session:
         if request.method == "POST":
-            link = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
-            room_links.append(link)
-            for i in room_links:
-                if i == link:
-                    room_links.remove(link)
-                    link = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
-                    room_links.append(link)
-            print(room_links)
-            return redirect(f"/play/{link}")
+            if request.form['x'] == 'create':
+                link = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
+                room_links.append([link])
+                for i in room_links:
+                    if i == link:
+                        room_links.remove(link)
+                        link = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
+                        room_links.append([link])
+                print(room_links)
+                return redirect(f"/play/{link}")
+            elif request.form['x'] == 'search':
+                print(request.form.get('join'))
+                return redirect(f"play/{request.form.get('join')}")
         return render_template('homepage.html')
 
-
     else: return render_template('front.html')
+
 
 
 @login_manager.user_loader
@@ -312,7 +315,7 @@ def contactus():
 def play():
 
     if 'user' in session:
-        return render_template('play.html', u=session['user'], rooms=ROOMS)
+        return render_template('play.html', u=session['user'])
     else:
         flash("Please log in")
         return redirect(url_for('login'))
@@ -338,24 +341,30 @@ def leave(data):
 
 @app.route(f'/play/<roomlink>', methods=['GET', 'POST'])
 def room(roomlink):
+    listq = [x for x in pd.read_csv('questions.csv')['Questions']]
     if 'user' in session:
+        index = 0
         for i in room_links:
-            if i == roomlink:
-                q=random.randint(0,100)
+            if i[0] == roomlink:
+                q = random.randint(1, 100)
+                room_links[index].append(random.choice(listq))
+                print(room_links)
                 if request.method == "POST":
                     in_code = request.form.get('input')
                     lang = request.form.get('lang')
-                    result, errors = compiler(in_code, lang,q)
+                    result, errors = compiler(in_code, lang, q)
                     result = result.replace("\n", '\n')
                 else:
                     result = ''
                     in_code = ''
                     errors = ''
                 if errors != None and result == None:
-                    return render_template('compiling.html', e=errors, c=in_code)
+                    return render_template('compiler.html', e=errors, c=in_code, que=room_links[index][1], link=roomlink)
                 elif errors == None and result != None:
-                    return render_template('compiling.html', r=result, c=in_code)
-                return render_template('compiling.html', u=session['user'], rooms=ROOMS,q=f'result :{int(result) == int(solution.solution(q))}')
+                    return render_template('compiler.html', r=result, c=in_code, q=f'result :{int(result) == int(solution.solution(q))}' if result else '', que=room_links[index][1], link=roomlink)
+                return render_template('compiler.html', u=session['user'], que=room_links[index][1], link=roomlink)
+            else:
+                index += 1
         else:
             return render_template('404.html')
     else:
