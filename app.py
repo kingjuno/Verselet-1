@@ -51,10 +51,8 @@ def front():
                         room_links.remove(link)
                         link = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
                         room_links.append([link])
-                print(room_links)
                 return redirect(f"/play/{link}")
             elif request.form['x'] == 'search':
-                print(request.form.get('join'))
                 return redirect(f"play/{request.form.get('join')}")
         return render_template('homepage.html')
 
@@ -315,14 +313,9 @@ def room(roomlink):
         index = 0
         for i in room_links:
             if i[0] == roomlink:
-                print(":)")
-                room_links[index].append(random.choice(listq))
-                print(room_links)    
+                room_links[index].append(random.choice(listq)) 
                 if request.method == "POST":
-                    in_code = request.form.get('input')
-                    lang = request.form.get('lang')
-                    result, errors = compiler(in_code, lang)
-                    result = result.replace("\n", '\n')
+                    in_code = request.form.get('input'); lang = request.form.get('lang'); result, errors = compiler(in_code, lang); result = result.replace("\n", '\n')
                 else:
                     result = ''; in_code = ''; errors = ''
                 if errors != None:
