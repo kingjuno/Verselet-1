@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 Id,Questions,Answers,Input,Vars
 1,Print the given variable STRING. ,[FIRST, SECOND, THIRD ],[FIRST, SECOND, THIRD]
 2,Print the given integer, N.,"[1, 2, 3],[1, 2, 3,]
 3,Print 'Hello, ' plus the given string, NAME.,[[Hello, Arsh], [Hello, Akshit], [Hello, Juno]],[Arsh, Akshit, Juno]
+=======
+Id,Questions,Answers1,XYZ,abc2,JFK,bca3,ABC,cba
+>>>>>>> cf2fd441266471e2c54ebb0d0e0da76fd8686df8

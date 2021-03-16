@@ -1,6 +1,6 @@
 import requests
 from ExtraStuff2 import *
-def compiler(code,lang):
+def compiler(code,lang,i=0):
     in1=code
     stdin = 'hi'
 
@@ -10,7 +10,7 @@ def compiler(code,lang):
     to_compile = {
         "LanguageChoice": getid(lang),
         "Program": code,
-        "Input": '',
+        "Input": i,
         "CompilerArgs": ""
     }
     output = requests.post(url, data=to_compile)

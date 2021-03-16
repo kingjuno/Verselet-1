@@ -3,6 +3,7 @@ from flask_login import LoginManager
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib
+import solution
 import pandas as pd
 from PIL import Image
 from ExtraStuff import resize, hashpass
@@ -19,6 +20,7 @@ app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rooms.db'
 
 socketio.init_app(app)
+ROOMS = ['play', 'coding', 'challenge', 'rank']
 
 UPLOAD_FOLDER = "static/pfps/"
 login_manager = LoginManager()
@@ -43,18 +45,17 @@ def page_not_found(e):
 def front():
     if 'user' in session:
         if request.method == "POST":
-            if request.form['x'] == 'create':
-                link = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
-                room_links.append([link])
-                for i in room_links:
-                    if i == link:
-                        room_links.remove(link)
-                        link = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
-                        room_links.append([link])
-                return redirect(f"/play/{link}")
-            elif request.form['x'] == 'search':
-                return redirect(f"play/{request.form.get('join')}")
+            link = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
+            room_links.append(link)
+            for i in room_links:
+                if i == link:
+                    room_links.remove(link)
+                    link = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
+                    room_links.append(link)
+            print(room_links)
+            return redirect(f"/play/{link}")
         return render_template('homepage.html')
+
 
     else: return render_template('front.html')
 
@@ -142,7 +143,6 @@ def user_profile():
         flash("Please login or create an account first")
         return redirect(url_for('login'))
 
-
 @app.route('/code', methods=['GET', 'POST'])
 def code():
     if request.method == "POST":
@@ -174,6 +174,8 @@ def settings_page():
             # PASSING ALL INFO TO DISPLAY
 
             dob = ''; e_mail = ''; inx = 0
+            month = ['empty', 'January', 'February', 'March', 'April', 'May', 'June',
+                     'July', 'August', 'September', 'October', 'November', 'December']
             df2 = pd.read_csv('db.csv')
             udb = pd.read_csv('User.csv')
             wins = df2[df2['Username'] == session['user']]['Wins'].values[0]
@@ -306,39 +308,60 @@ def contactus():
         return redirect('/login')
 
 
-@app.route(f'/play/<roomlink>', methods=['GET', 'POST'])
-def room(roomlink):
-    listq = [x for x in pd.read_csv('questions.csv')['Questions']]
+@app.route('/play', methods=['GET', 'POST'])
+def play():
+
     if 'user' in session:
-        index = 0
-        for i in room_links:
-            if i[0] == roomlink:
-                room_links[index].append(random.choice(listq)) 
-                if request.method == "POST":
-                    in_code = request.form.get('input'); lang = request.form.get('lang'); result, errors = compiler(in_code, lang); result = result.replace("\n", '\n')
-                else:
-                    result = ''; in_code = ''; errors = ''
-                if errors != None:
-                    return render_template('compiler.html', e=errors, c=in_code, link=roomlink, que=room_links[index][1])
-                elif errors == None and result != None:
-                    return render_template('compiler.html', r=result, c=in_code, link=roomlink, que=room_links[index][1])
-                return render_template('compiler.html', u=session['user'], link=roomlink, que=room_links[index][1])
-            else:
-                index += 1
-        else:
-            return render_template('404.html')
+        return render_template('play.html', u=session['user'], rooms=ROOMS)
     else:
         flash("Please log in")
         return redirect(url_for('login'))
 
 
 @socketio.on('message')
-def handleMessage(msg):
-    print('Message: ' + msg)
-    if msg == 'User has connected!':
-        send('System : ' + msg, broadcast=True)
+def message(data):
+    print(f'\n\n{data}\n\n')
+    send(data)
+
+
+@socketio.on('join')
+def join(data):
+    join_room(data['room'])
+    send({'msg': data['username'] + " has joined " + data['room']}, room=data['room'])
+
+
+@socketio.on('leave')
+def leave(data):
+    leave_room(data['room'])
+    send({'msg': data['username'] + " has left " + data['room']}, room=data['room'])
+
+
+@app.route(f'/play/<roomlink>', methods=['GET', 'POST'])
+def room(roomlink):
+    if 'user' in session:
+        for i in room_links:
+            if i == roomlink:
+                q=random.randint(0,100)
+                if request.method == "POST":
+                    in_code = request.form.get('input')
+                    lang = request.form.get('lang')
+                    result, errors = compiler(in_code, lang,q)
+                    result = result.replace("\n", '\n')
+                else:
+                    result = ''
+                    in_code = ''
+                    errors = ''
+                if errors != None and result == None:
+                    return render_template('compiling.html', e=errors, c=in_code)
+                elif errors == None and result != None:
+                    return render_template('compiling.html', r=result, c=in_code)
+                return render_template('compiling.html', u=session['user'], rooms=ROOMS,q=f'result :{int(result) == int(solution.solution(q))}')
+        else:
+            return render_template('404.html')
     else:
-        send(session['user'] + ' ' + msg, broadcast=True)
+        flash("Please log in")
+        return redirect(url_for('login'))
+
 
 
 if __name__ == '__main__':
