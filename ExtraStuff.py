@@ -8,7 +8,7 @@ def hashpass(password:str):
     b.append(str(a.digest()).split("'")[1])
     b[0] = str(base64.urlsafe_b64encode(bytes(b[0].encode()))).split("'")[1]
     # salting
-    salt = ['$', '#', '!', '~', '@', '^', '&', '`', '%', '*', '_', '-', '.', '|', ':', ';', '?']
+    salt = ['H', 'c', 'D', 'L', 'b', 'M', 'S', 'a', 'N', 'q', 'K', 'j', 'V', 'd', 'O', 'W', 'x']
     c = (b[0].split("G")); d = []; e = []
 
     for i in range(len(c)): a = salt[i]; b = c[i]; c[i] = b+a
