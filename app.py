@@ -361,7 +361,7 @@ def room(roomlink):
                 if errors != None and result == None:
                     return render_template('compiler.html', e=errors, c=in_code, que=room_links[index][1], link=roomlink)
                 elif errors == None and result != None:
-                    return render_template('compiler.html', r=result, c=in_code, q=f'result :{int(result) == int(solution.solution(q))}' if result else '', que=room_links[index][1], link=roomlink)
+                    return render_template('compiler.html', r=result, c=in_code, q=f'result :{(result) == (solution.solution(q))}' if result else '', que=room_links[index][1], link=roomlink)
                 return render_template('compiler.html', u=session['user'], que=room_links[index][1], link=roomlink)
             else:
                 index += 1
