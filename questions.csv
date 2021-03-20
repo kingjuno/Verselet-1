@@ -1,4 +1,4 @@
-Id,Questions,Answers,Inputs
-1,Print the variable,"[hello, marhaban, ni hao, hola, bonjour]","[hello, marhaban, ni hao, hola, bonjour]"
-2,Print the result of the variable + 1,"[2, 10, 20, 100]","[1, 9, 19, 99]"
-3,Print the integer squared value of the variable,"[100, 25, 36, 49 ,64]","[10, 5, 6, 7, 8] "
+Id,Questions,Answers,Inputs,type
+1,Capture the variable,"[hello marhaban ni hao hola bonjour]","hello$marhaban$ni$hao$hola$bonjour",str
+2,Multiply the variable + 1,"11500","500$1000$10000",int
+3,Print the integer squared value of the variable,"100 25 36 49 64","10$5$6$7$8",str
