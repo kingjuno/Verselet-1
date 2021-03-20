@@ -366,8 +366,6 @@ def room(roomlink):
                             else: inq += 1
                         result, errors = compiler(request.form.get('input'), request.form.get('lang'), q)
                         result = result.replace("\n", '')
-                        print(result)
-                        print(str(expected_r))
                         if errors != None and result == None:
                             return render_template('compiler.html', e='Fail', c=request.form.get('input'), que=room_links[index][1],link=roomlink)
                         elif errors == None and result != None:
