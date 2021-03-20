@@ -348,20 +348,34 @@ def room(roomlink):
             if i[0] == roomlink:
                 q = random.randint(1, 100)
                 room_links[index].append(random.choice(listq))
-                print(room_links)
                 if request.method == "POST":
-                    in_code = request.form.get('input')
-                    lang = request.form.get('lang')
-                    result, errors = compiler(in_code, lang, q)
-                    result = result.replace("\n", '\n')
-                else:
-                    result = ''
-                    in_code = ''
-                    errors = ''
-                if errors != None and result == None:
-                    return render_template('compiler.html', e=errors, c=in_code, que=room_links[index][1], link=roomlink)
-                elif errors == None and result != None:
-                    return render_template('compiler.html', r=result, c=in_code, q=f'result :{(result) == (solution.solution(q))}' if result else '', que=room_links[index][1], link=roomlink)
+                    if request.form['btnc'] == 'run':
+                        in_code = request.form.get('input')
+                        lang = request.form.get('lang')
+                        result, errors = compiler(in_code, lang, q)
+                        result = result.replace("\n", '\n')
+                        if errors != None and result == None:
+                            return render_template('compiler.html', e=errors, c=in_code, que=room_links[index][1], link=roomlink)
+                        elif errors == None and result != None:
+                            return render_template('compiler.html', r=result, c=in_code, q=f'result :{(result) == (solution.solution(q))}' if result else '', que=room_links[index][1], link=roomlink)
+                    elif request.form['btnc'] == 'submit':
+                        inq = 0
+                        for qu in pd.read_csv('questions.csv')['Questions']:
+                            if qu == room_links[index][1] == qu:
+                                expected_r = pd.read_csv('questions.csv')['Answers'][inq]
+                            else: inq += 1
+                        result, errors = compiler(request.form.get('input'), request.form.get('lang'), q)
+                        result = result.replace("\n", '')
+                        print(result)
+                        print(str(expected_r))
+                        if errors != None and result == None:
+                            return render_template('compiler.html', e='Fail', c=request.form.get('input'), que=room_links[index][1],link=roomlink)
+                        elif errors == None and result != None:
+                            if result == expected_r.strip():
+                                return render_template('compiler.html', r=f'{result}\nPass !', c=request.form.get('input'), que=room_links[index][1], link=roomlink)
+                            elif result != expected_r.strip(): return render_template('compiler.html', r=f'{result}\nFailure', c=request.form.get('input'), que=room_links[index][1], link=roomlink)
+
+
                 return render_template('compiler.html', u=session['user'], que=room_links[index][1], link=roomlink)
             else:
                 index += 1

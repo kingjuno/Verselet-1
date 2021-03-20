@@ -1,4 +1,4 @@
 Id,Questions,Answers
-1,XYZ,abc
-2,JFK,bca
-3,ABC,cba
+1,Print 'hello',hello
+2,Print the result of 1 + 1,2
+3,Print 100,100
