@@ -14,7 +14,7 @@ import os
 import string
 import random
 from compling import *
-q=0
+q = 0
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rooms.db'
@@ -42,25 +42,25 @@ def page_not_found(e):
 @login_manager.user_loader
 @app.route('/', methods=['GET', 'POST'])
 def front():
-    global q,in_code
+    global q, in_code
     if 'user' in session:
         if request.method == "POST":
             if request.form['x'] == 'create':
                 df = pd.read_csv('questions.csv')
                 q = random.randint(0, df.index[-1])
-                if df['type'][q]=='int':
-                    in_code='''
-x = input().split('$')
-for i in x:
-    int(x)
-print('answer')
-                    '''
+                if df['type'][q] == 'int':
+                    in_code = '''
+                    x = input().split('$')
+                    for i in x:
+                        i = int(i)
+                    print('YOUR ANSWER')
+                                        '''
                 else:
                     in_code = '''
-x = input().split('$')
-for i in x:
-    x
-print('answer')
+                    x = input().split('$')
+                    for i in x:
+                        pass
+                    print('YOUR ANSWER ')
                                         '''
                 link = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
                 room_links.append([link])
@@ -357,8 +357,8 @@ def leave(data):
 
 @app.route(f'/play/<roomlink>', methods=['GET', 'POST'])
 def room(roomlink):
-    global q,in_code
-    df=pd.read_csv('questions.csv')
+    global q, in_code
+    df = pd.read_csv('questions.csv')
     listq = [x for x in pd.read_csv('questions.csv')['Questions']]
     if 'user' in session:
         index = 0
@@ -371,13 +371,11 @@ def room(roomlink):
                         in_code = request.form.get('input')
                         lang = request.form.get('lang')
                         result, errors = compiler(in_code, lang, df['Inputs'][q])
-                        print(result,errors)
-                        print(df["Answers"][q])
                         result = result.replace("\n", '\n')
                         if errors != None:
                             return render_template('compiler.html', e=errors, c=in_code, que=room_links[index][1], link=roomlink,r=result,q=f'result :{(result) == (df["Answers"][q])}' if result else '')
                         else:
-                            a=[]
+                            a = []
                             if result:
                                 for z in df.index:
                                     if not df['Answers'][q][z] == result[z]:
