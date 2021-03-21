@@ -378,29 +378,19 @@ print('YOUR ANSWER')
                         for qw in df['Questions']:
                             if qw == room_links[index][1]:
                                 q_answer = df['Answers'][qinx]
-                                print(q_answer)
+                                break
                             else: qinx += 1
-                        print(qinx)
-                        print(df['Inputs'][qinx])
-
-                        print('\nDF INDEX IS\n')
-                        print(f'\n{df.index}\n')
 
                         in_code = request.form.get('input')
                         lang = request.form.get('lang')
                         result, errors = compiler(in_code, lang, df['Inputs'][qinx])
-                        result = result.replace("\n", '\n')
+                        result = result.replace("\n", '')
+                        q_answer = q_answer.replace('\n', '')
+                        print(q_answer, result)
                         if errors is not None:
-                            return render_template('compiler.html', e=errors, c=in_code, que=room_links[index][1], link=roomlink, q=f'Result : {result == (q_answer)}' if result else '')
+                            return render_template('compiler.html', e=errors, c=in_code, que=room_links[index][1], link=roomlink, q=f'Result : {result == q_answer}' if result else '')
                         else:
-                            a = []
-                            if result:
-                                for z in df.index:
-                                    if not q_answer[z] == result[z]:
-                                        a.append(q_answer[z])
-                            else:
-                                a.append('No chance of this being correct')
-                            return render_template('compiler.html', r=result, c=in_code, q=f'Result : True' if not a else 'Result : False', que=room_links[index][1], link=roomlink, z=f"Expected : {q_answer}")
+                            return render_template('compiler.html', r=result, c=in_code, q=f'Result : True' if q_answer == result else 'Result : False', que=room_links[index][1], link=roomlink, z=f"Expected : {q_answer}")
                     elif request.form['btnc'] == 'submit':
                         pass
 
