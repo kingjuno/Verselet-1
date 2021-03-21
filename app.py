@@ -352,7 +352,7 @@ def room(roomlink):
         for i in room_links:
             if i[0] == roomlink:
 
-                room_links[index].append('Time for Pyramids'); qindex = 0
+                room_links[index].append(Question); qindex = 0
 
                 for qvar in df['Questions']:
                     if qvar == room_links[index][1]:
