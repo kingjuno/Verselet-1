@@ -42,12 +42,26 @@ def page_not_found(e):
 @login_manager.user_loader
 @app.route('/', methods=['GET', 'POST'])
 def front():
-    global q
+    global q,in_code
     if 'user' in session:
         if request.method == "POST":
             if request.form['x'] == 'create':
                 df = pd.read_csv('questions.csv')
                 q = random.randint(0, df.index[-1])
+                if df['type'][q]=='int':
+                    in_code='''
+x = input().split('$')
+for i in x:
+    int(x)
+print('answer')
+                    '''
+                else:
+                    in_code = '''
+x = input().split('$')
+for i in x:
+    x
+print('answer')
+                                        '''
                 link = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
                 room_links.append([link])
                 for i in room_links:
@@ -343,7 +357,7 @@ def leave(data):
 
 @app.route(f'/play/<roomlink>', methods=['GET', 'POST'])
 def room(roomlink):
-    global q
+    global q,in_code
     df=pd.read_csv('questions.csv')
     listq = [x for x in pd.read_csv('questions.csv')['Questions']]
     if 'user' in session:
@@ -388,7 +402,7 @@ def room(roomlink):
                             elif result != expected_r.strip(): return render_template('compiler.html', r=f'{result}\nFailure', c=request.form.get('input'), que=room_links[index][1], link=roomlink)
 
 
-                return render_template('compiler.html', u=session['user'], que=room_links[index][1], link=roomlink)
+                return render_template('compiler.html', u=session['user'], que=room_links[index][1], link=roomlink,c=in_code)
             else:
                 index += 1
         else:
