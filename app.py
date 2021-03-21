@@ -340,6 +340,7 @@ def join(data):
 @socketio.on('leave')
 def leave(data):
     leave_room(data['room'])
+    
     send({'msg': data['username'] + " has left " + data['room']}, room=data['room'])
 
 
