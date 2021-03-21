@@ -352,7 +352,7 @@ def room(roomlink):
         for i in room_links:
             if i[0] == roomlink:
 
-                room_links[index].append(Question); qindex = 0
+                room_links[index].append('Add all the variables'); qindex = 0
 
                 for qvar in df['Questions']:
                     if qvar == room_links[index][1]:
@@ -383,7 +383,7 @@ print('YOUR ANSWER')
                                 if df['type'][qinx]=='code':
                                     print(df['Answers'][qinx])
                                     b=[]
-                                    input1=int(df['Inputs'][qinx])
+                                    input1=(df['Inputs'][qinx])
                                     exec(df['Answers'][qinx])
                                     q_answer='\n'+'\n'.join(b)
                                     print(q_answer)
