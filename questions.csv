@@ -1,4 +1,8 @@
 Id,Questions,Answers,Inputs,type
-1,Capture the variable,"[hello marhaban ni hao hola bonjour]","hello$marhaban$ni$hao$hola$bonjour",str
-2,Multiply the variable + 1,"11500","500$1000$10000",int
-3,Print the integer squared value of the variable,"100 25 36 49 64","10$5$6$7$8",str
+1,Print the variable,"[hello marhaban ni hao hola bonjour]","hello$marhaban$ni$hao$hola$bonjour",str
+2,Add all the variables,"11500","500$1000$10000",int
+3,Print the squared value of the integer,"100 25 36 49 64","10$5$6$7$8",int
+4,Print the cube root value of the given variable,"8 27 1000 64 125","2$3$10$4$5",int
+5,Print the variable divided by 2,"2 8 5 10 12","4$16$10$20$24",int
+6,Print the variable times 2,"10 100 50 70","5$50$25$35",int
+7,Print the variable times 3,"9 27 21 30 33","3$9$7$10$11",int
