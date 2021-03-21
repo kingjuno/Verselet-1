@@ -1,9 +1,9 @@
 Id,Questions,Answers,Inputs,type
 1,Print the variable,"b.append(f'{input1.replace(""$"","" "")}')",hello$marhaban$ni hao$hola$bonjour,code
-2,Add all the variables,"b.append(f'{sum([int(goaway) for goaway in input1.split('$')])}')",500$1000$10000,code
-3,Print the squared value of the integer,100 25 36 49 64,10$5$6$7$8,int
-4,Print the cube root value of the given variable,8 27 1000 64 125,2$3$10$4$5,int
-5,Print the variable divided by 2,2 8 5 10 12,4$16$10$20$24,int
-6,Print the variable times 2,10 100 50 70,5$50$25$35,int
-7,Print the variable times 3,9 27 21 30 33,3$9$7$10$11,int
+2,Add all the variables,b.append(str(sum([int(z) for z in input1.split('$')]))),500$1000$10000,code
+3,Print the squared value of the integer,b.append(' '.join(str(int(i)**2) for i in input1.split('$'))),10$5$6$7$8,code
+4,Print the cube value of the given variable,b.append(' '.join(str(int(i)**3) for i in input1.split('$'))),2$3$10$4$5,code
+5,Print the variable divided by 2,b.append(' '.join(str(int(i)//2) for i in input1.split('$'))),4$16$10$20$24,code
+6,Print the variable times 2,b.append(' '.join(str(int(i)*2) for i in input1.split('$'))),5$50$25$35,code
+7,Print the variable times 3,b.append(' '.join(str(int(i)*3) for i in input1.split('$'))),3$9$7$10$11,code
 8,Time for Pyramids,for z in range(int(input1)):b.append(' '*(int(input1)-z)+'/'+'**'*z + '\\'),5,code
