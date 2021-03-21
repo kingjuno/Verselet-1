@@ -42,12 +42,16 @@ def page_not_found(e):
 @login_manager.user_loader
 @app.route('/', methods=['GET', 'POST'])
 def front():
-    global q, in_code
+    global q, in_code,Question
     if 'user' in session:
         if request.method == "POST":
             if request.form['x'] == 'create':
                 link = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
                 room_links.append([link])
+
+                df = pd.read_csv('questions.csv')
+                Question=df['Questions'][random.randint(0,df.index[-1])]
+
                 for i in room_links:
                     if i == link:
                         room_links.remove(link)
@@ -341,15 +345,14 @@ def leave(data):
 
 @app.route(f'/play/<roomlink>', methods=['GET', 'POST'])
 def room(roomlink):
-    global in_code, q_answer
-    df = pd.read_csv('questions.csv')
-    listq = [x for x in pd.read_csv('questions.csv')['Questions']]
+    global in_code,Question
     if 'user' in session:
         index = 0
+        df=pd.read_csv('questions.csv')
         for i in room_links:
             if i[0] == roomlink:
 
-                room_links[index].append(random.choice(listq)); qindex = 0
+                room_links[index].append('Time for Pyramids'); qindex = 0
 
                 for qvar in df['Questions']:
                     if qvar == room_links[index][1]:
@@ -377,20 +380,38 @@ print('YOUR ANSWER')
                         qinx = 0
                         for qw in df['Questions']:
                             if qw == room_links[index][1]:
-                                q_answer = df['Answers'][qinx]
+                                if df['type'][qinx]=='code':
+                                    print(df['Answers'][qinx])
+                                    b=[]
+                                    input1=int(df['Inputs'][qinx])
+                                    exec(df['Answers'][qinx])
+                                    q_answer='\n'+'\n'.join(b)
+                                    print(q_answer)
+                                else:
+                                    q_answer = df['Answers'][qinx]
+
                                 break
                             else: qinx += 1
 
                         in_code = request.form.get('input')
                         lang = request.form.get('lang')
                         result, errors = compiler(in_code, lang, df['Inputs'][qinx])
-                        result = result.replace("\n", '')
-                        q_answer = q_answer.replace('\n', '')
+                        result = result
+                        q_answer = q_answer
                         print(q_answer, result)
+                        a=[]
+                        if result and len(result)==len(q_answer):
+                            answer=q_answer.replace('\n','')
+                            r=result.replace('\n','')
+                            for z in range(len(answer)):
+                                if not answer[z] == r[z]:
+                                    a.append('Nope, this one is wrong too')
+                        else:
+                            a.append('No chance of this being correct')
                         if errors is not None:
                             return render_template('compiler.html', e=errors, c=in_code, que=room_links[index][1], link=roomlink, q=f'Result : {result == q_answer}' if result else '')
                         else:
-                            return render_template('compiler.html', r=result, c=in_code, q=f'Result : True' if q_answer == result else 'Result : False', que=room_links[index][1], link=roomlink, z=f"Expected : {q_answer}")
+                            return render_template('compiler.html', r=result, c=in_code, q=f'Result : True' if not a else 'Result : False', que=room_links[index][1], link=roomlink, z=f"Expected : {q_answer}")
                     elif request.form['btnc'] == 'submit':
                         pass
 

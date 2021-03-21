@@ -6,3 +6,4 @@ Id,Questions,Answers,Inputs,type
 5,Print the variable divided by 2,"2 8 5 10 12","4$16$10$20$24",int
 6,Print the variable times 2,"10 100 50 70","5$50$25$35",int
 7,Print the variable times 3,"9 27 21 30 33","3$9$7$10$11",int
+8,Time for Pyramids,for z in range(input1):b.append(' '*(input1-z)+'/'+'**'*z + '\\'),5,code
