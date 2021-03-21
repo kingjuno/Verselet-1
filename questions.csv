@@ -1,5 +1,5 @@
 Id,Questions,Answers,Inputs,type
-1,Print the variable,"[hello marhaban ni hao hola bonjour]","hello$marhaban$ni$hao$hola$bonjour",str
+1,Print the variable,"['hello', 'marhaban', 'ni hao', 'hola', 'bonjour']","hello$marhaban$ni$hao$hola$bonjour",str
 2,Add all the variables,"11500","500$1000$10000",int
 3,Print the squared value of the integer,"100 25 36 49 64","10$5$6$7$8",int
 4,Print the cube root value of the given variable,"8 27 1000 64 125","2$3$10$4$5",int

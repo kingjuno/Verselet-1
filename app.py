@@ -46,22 +46,6 @@ def front():
     if 'user' in session:
         if request.method == "POST":
             if request.form['x'] == 'create':
-                df = pd.read_csv('questions.csv')
-                q = random.randint(0, df.index[-1])
-                if df['type'][q] == 'int':
-                    in_code = '''
-                    x = input().split('$')
-                    for i in x:
-                        i = int(i)
-                    print('YOUR ANSWER')
-                                        '''
-                else:
-                    in_code = '''
-                    x = input().split('$')
-                    for i in x:
-                        pass
-                    print('YOUR ANSWER ')
-                                        '''
                 link = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
                 room_links.append([link])
                 for i in room_links:
@@ -357,7 +341,7 @@ def leave(data):
 
 @app.route(f'/play/<roomlink>', methods=['GET', 'POST'])
 def room(roomlink):
-    global q, in_code
+    global in_code, q_answer
     df = pd.read_csv('questions.csv')
     listq = [x for x in pd.read_csv('questions.csv')['Questions']]
     if 'user' in session:
@@ -365,39 +349,60 @@ def room(roomlink):
         for i in room_links:
             if i[0] == roomlink:
 
-                room_links[index].append(random.choice(listq))
+                room_links[index].append(random.choice(listq)); qindex = 0
+
+                for qvar in df['Questions']:
+                    if qvar == room_links[index][1]:
+                        if df['type'][qindex] == 'int':
+                            in_code = '''
+x = input().split('$')
+for i in x:
+    i = int(i)
+
+print('YOUR ANSWER')                                                    
+'''
+                        else:
+                            in_code = '''
+x = input().split('$')
+for i in x:
+    pass
+    
+print('YOUR ANSWER')                                                                                                                                                                                    
+'''
+                    else: qindex += 1
+
                 if request.method == "POST":
                     if request.form['btnc'] == 'run':
+
+                        qinx = 0
+                        for qw in df['Questions']:
+                            if qw == room_links[index][1]:
+                                q_answer = df['Answers'][qinx]
+                                print(q_answer)
+                            else: qinx += 1
+                        print(qinx)
+                        print(df['Inputs'][qinx])
+
+                        print('\nDF INDEX IS\n')
+                        print(f'\n{df.index}\n')
+
                         in_code = request.form.get('input')
                         lang = request.form.get('lang')
-                        result, errors = compiler(in_code, lang, df['Inputs'][q])
+                        result, errors = compiler(in_code, lang, df['Inputs'][qinx])
                         result = result.replace("\n", '\n')
-                        if errors != None:
-                            return render_template('compiler.html', e=errors, c=in_code, que=room_links[index][1], link=roomlink,r=result,q=f'result :{(result) == (df["Answers"][q])}' if result else '')
+                        if errors is not None:
+                            return render_template('compiler.html', e=errors, c=in_code, que=room_links[index][1], link=roomlink, q=f'Result : {result == (q_answer)}' if result else '')
                         else:
                             a = []
                             if result:
                                 for z in df.index:
-                                    if not df['Answers'][q][z] == result[z]:
-                                        a.append(df['Answers'][q][z])
+                                    if not q_answer[z] == result[z]:
+                                        a.append(q_answer[z])
                             else:
                                 a.append('No chance of this being correct')
-                            print(a)
-                            return render_template('compiler.html', r=result, c=in_code, q=f'result :True' if not a else 'result :False', que=room_links[index][1], link=roomlink,z=f"Expected :{df['Answers'][q]}")
+                            return render_template('compiler.html', r=result, c=in_code, q=f'Result : True' if not a else 'Result : False', que=room_links[index][1], link=roomlink, z=f"Expected : {q_answer}")
                     elif request.form['btnc'] == 'submit':
-                        inq = 0
-                        for qu in pd.read_csv('questions.csv')['Questions']:
-                            if qu == room_links[index][1] == qu:
-                                expected_r = pd.read_csv('questions.csv')['Answers'][inq]
-                            else: inq += 1
-                        result, errors = compiler(request.form.get('input'), request.form.get('lang'), q)
-                        result = result.replace("\n", '')
-                        if errors != None and result == None:
-                            return render_template('compiler.html', e='Fail', c=request.form.get('input'), que=room_links[index][1],link=roomlink)
-                        elif errors == None and result != None:
-                            if result == expected_r.strip():
-                                return render_template('compiler.html', r=f'{result}\nPass !', c=request.form.get('input'), que=room_links[index][1], link=roomlink)
-                            elif result != expected_r.strip(): return render_template('compiler.html', r=f'{result}\nFailure', c=request.form.get('input'), que=room_links[index][1], link=roomlink)
+                        pass
 
 
                 return render_template('compiler.html', u=session['user'], que=room_links[index][1], link=roomlink,c=in_code)
