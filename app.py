@@ -7,7 +7,7 @@ import solution
 import pandas as pd
 from PIL import Image
 from ExtraStuff import resize, hashpass
-from Models import Room, db
+from Models import Room, db, init_room, update_room, delete_room, get_room
 from websockets import socketio, send, emit, join_room, leave_room
 import json
 import os
@@ -20,7 +20,7 @@ app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rooms.db'
 
 socketio.init_app(app)
-
+db.init_app(app)
 UPLOAD_FOLDER = "static/pfps/"
 login_manager = LoginManager()
 app.secret_key = 'ec52e5ead3899e4a0717b9806e1125de8af3bad84ca7f511'
@@ -30,6 +30,7 @@ room_links = []
 
 def create_app():
     app = Flask(__name__)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rooms.db'
     db.init_app(app)
     return app
 
@@ -123,10 +124,7 @@ def register():
 def user_profile():
     try:
         dob = ''; e_mail = ''; inx = 0
-        month = ['empty', 'January', 'February', 'March', 'April', 'May', 'June',
-                 'July', 'August', 'September', 'October', 'November', 'December']
-        df2 = pd.read_csv('db.csv')
-        pfp = f'static/pfps/{session["user"]}.png'
+        month = ['empty', 'January', 'F"ser"]}.png']
         udb = pd.read_csv('User.csv')
         wins = df2[df2['Username'] == session['user']]['Wins'].values[0]
         games = df2[df2['Username'] == session['user']]['Games'].values[0]
@@ -325,22 +323,7 @@ def play():
         return redirect(url_for('login'))
 
 
-@socketio.on('message')
-def message(data):
-    print(f'\n\n{data}\n\n')
-    send(data)
 
-
-@socketio.on('join')
-def join(data):
-    join_room(data['room'])
-    send({'msg': data['username'] + " has joined " + data['room']}, room=data['room'])
-
-
-@socketio.on('leave')
-def leave(data):
-    leave_room(data['room'])
-    send({'msg': data['username'] + " has left " + data['room']}, room=data['room'])
 
 
 @app.route(f'/play/<roomlink>', methods=['GET', 'POST'])
@@ -421,11 +404,22 @@ print('YOUR ANSWER')
                 index += 1
         else:
             return render_template('404.html')
-    else:
-        flash("Please log in")
-        return redirect(url_for('login'))
+    else:solution
 
-
+""" @app.route("/testdb", methods=["GET","POST"])
+def testdb():
+    if request.method == "POST":
+        init_room("123","some status","emil test 123", "some code")
+        update_room("123",code="some other code")
+        print(get_room("123"))
+    if request.method == "GET":
+        print(get_room("123"))
+        delete_room("123")
+        print(get_room("123")) """
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    socketio.run(app)
+
+## @Nuke Ninja 
+# call init_room(roomlink, status,names,code) when the room is created and delete(roomlink) when you delete it.
+# call update_room(roomlink, whatever you want to change) and get_room(roomlink) to get all the values as a dict. 
