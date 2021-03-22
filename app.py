@@ -413,7 +413,7 @@ print('YOUR ANSWER')
                         else:
                             return render_template('compiler.html', r=result, c=in_code, q=f'Result : True' if not a else 'Result : False', que=room_links[index][1], link=roomlink, z=f"Expected : {q_answer}")
                     elif request.form['btnc'] == 'submit':
-                        pass
+                        return render_template('result.html', username="Future Work",status="Done",answer="Future Work")
 
 
                 return render_template('compiler.html', u=session['user'], que=room_links[index][1], link=roomlink,c=in_code)

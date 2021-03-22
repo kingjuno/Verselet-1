@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Result{% endblock %}
+
+{% block content %}
+<style>
+
+    body {
+     background-image: url({{ url_for('static', filename='dots.gif')}});
+     overflow-y: hidden;
+     
+   }
+   ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+::-webkit-scrollbar-track {
+    background: white;
+  }
+
+::-webkit-scrollbar-thumb {
+    background: #A44AA4;
+ }
+
+::-webkit-scrollbar-thumb:hover {
+    background: #813F81;
+ }
+ .text{
+     color: whitesmoke;
+ }
+ table,th,td{
+     border: 3px solid whitesmoke;
+     border-collapse: collapse;
+ }
+ th,td{
+   text-align: center;
+   vertical-align: middle;
+ }
+</style>
+<center>
+<h1 class="text">Status</h1>
+<div class="text">
+<table>
+<tr><th>Name</th><th>Status</th><th>Answer</th></tr>
+<tr><td>{{username}}</td><td>{{status}}</td><td>{{answer}}</td></tr>
+</table>
+</div>
+</center>
+{% endblock %}
