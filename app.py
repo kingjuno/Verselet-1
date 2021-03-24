@@ -78,10 +78,12 @@ def login():
         df = pd.read_csv('User.csv')
         user = request.form.get("uname")
         password = request.form.get("psw")
+        print(df[df['User'] == user]['Pass'].values[0] == hashpass(password))
+        session['user'] = user
         try:
             if df[df['User'] == user]['Pass'].values[0] == hashpass(password):
                 session['user'] = user
-                return redirect(url_for('user_profile'))
+                return redirect(url_for('front'))
             else:
                 flash('Incorrect username or password')
                 return render_template("login.html")
@@ -124,31 +126,32 @@ def register():
 @login_manager.user_loader
 @app.route('/profile')
 def user_profile():
-    try:
-        dob = ''; e_mail = ''; inx = 0
-        month = ['empty', 'January', 'F"ser"]}.png']
-        udb = pd.read_csv('User.csv')
-        wins = df2[df2['Username'] == session['user']]['Wins'].values[0]
-        games = df2[df2['Username'] == session['user']]['Games'].values[0]
-        for i in udb['User']:
-            if udb['User'].values[inx] == session['user']:
-                e_mail = udb['Email'][inx]; dob = udb['DOB'][inx]
-            else: inx += 1
+    #try:
+    dob = ''; e_mail = ''; inx = 0
+    month = ['empty', 'January', 'F"ser"]}.png']
+    udb = pd.read_csv('User.csv')
+    df2=pd.read_csv('db.csv')
+    wins = df2[df2['Username'] == session['user']]['Wins'].values[0]
+    games = df2[df2['Username'] == session['user']]['Games'].values[0]
+    for i in udb['User']:
+        if udb['User'].values[inx] == session['user']:
+            e_mail = udb['Email'][inx]; dob = udb['DOB'][inx]
+        else: inx += 1
+    pfp = f'static\pfps\{session["user"]}'
+    # 2021-03-03
 
-        # 2021-03-03
+    doby = dob[0:4]
+    if dob[5] == '0':
+        dobm = month[int(dob[6])]
+    else: dobm = month[int(dob[5:6])]
+    if dob[8] == '0':
+        dobd = dob[9]
+    else: dobd = dob[8:9]
 
-        doby = dob[0:4]
-        if dob[5] == '0':
-            dobm = month[int(dob[6])]
-        else: dobm = month[int(dob[5:6])]
-        if dob[8] == '0':
-            dobd = dob[9]
-        else: dobd = dob[8:9]
-
-        return render_template('profile.html', w=wins, pfp=pfp, g=games, u=session['user'], e=e_mail, d=dobd, m=dobm, y=doby)
-    except:
-        flash("Please login or create an account first")
-        return redirect(url_for('login'))
+    return render_template('profile.html', w=wins, pfp=pfp, g=games, u=session['user'], e=e_mail, d=dobd, m=dobm, y=doby)
+    #except:
+     #   flash("Please login or create an account first")
+      #  return redirect(url_for('login'))
 
 @app.route('/code', methods=['GET', 'POST'])
 def code():

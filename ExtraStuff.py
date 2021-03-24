@@ -25,6 +25,7 @@ def hashpass(password:str):
         except: d.append(c[0])
 
     e.append(''.join(d))
+    print(e[0])
     return(e[0])
 
 def resize(path):
