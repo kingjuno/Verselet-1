@@ -1,3 +1,4 @@
+from logging import debug
 from flask import Flask, render_template, request, redirect, url_for, flash, session, abort
 from flask_login import LoginManager
 from email.mime.multipart import MIMEMultipart
@@ -18,6 +19,7 @@ q = 0
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rooms.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 socketio.init_app(app)
 db.init_app(app)
@@ -396,7 +398,23 @@ print('YOUR ANSWER')
                         else:
                             return render_template('compiler.html', r=result, c=in_code, q=f'Result : True' if not a else 'Result : False', que=room_links[index][1], link=roomlink, z=f"Expected : {q_answer}")
                     elif request.form['btnc'] == 'submit':
-                        return render_template('result.html', username="Future Work",status="Done",answer="Future Work")
+                        a = []
+                        if a:
+                            answer="Wrong"
+                        else:
+                            answer="Correct"
+                        name_v = session['user']
+                        status = "done"
+                        code = "nothing"
+                        init_room(roomlink,name_v,status,code)
+                        room = get_room(roomlink)
+                        print(room)
+                        username = room['names']
+                        status = room['status']
+                        indexs = 0
+                        for index in room['names']:
+                            indexs+=1
+                        return render_template('result.html', username=username,status=status,answer=answer,index=indexs)
 
 
                 return render_template('compiler.html', u=session['user'], que=room_links[index][1], link=roomlink,c=in_code)
@@ -418,7 +436,7 @@ def testdb():
         print(get_room("123")) """
 
 if __name__ == '__main__':
-    socketio.run(app)
+    socketio.run(app ,debug=True)
 
 ## @Nuke Ninja 
 # call init_room(roomlink, status,names,code) when the room is created and delete(roomlink) when you delete it.

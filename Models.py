@@ -4,7 +4,7 @@ db = SQLAlchemy()
 class Room(db.Model):
     id     = db.Column(db.Integer  , primary_key=True)
     link   = db.Column(db.String(8), unique=True, nullable=False) # the part of the link after rooms/
-    status = db.Column(db.String )
+    status = db.Column(db.String)
     names  = db.Column(db.String)
     code= db.Column(db.String)
     def __repr__(self):
