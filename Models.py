@@ -3,9 +3,9 @@ db = SQLAlchemy()
 
 class Room(db.Model):
     id     = db.Column(db.Integer  , primary_key=True)
-    link   = db.Column(db.String(8), unique=True, nullable=False) # the part of the link after rooms/
-    status = db.Column(db.String)
-    names  = db.Column(db.String)
+    link   = db.Column(db.String(8), unique=False, nullable=False) # the part of the link after rooms/
+    status = db.Column(db.String,unique=False)
+    names  = db.Column(db.String,unique=False)
     code= db.Column(db.String)
     def __repr__(self):
         return f"<Room {self.id}:{self.link}>"

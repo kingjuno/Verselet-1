@@ -409,9 +409,8 @@ print('YOUR ANSWER')
                         name_v = session['user']
                         status = "done"
                         code = "nothing"
-                        init_room(roomlink,name_v,status,code)
+                        init_room(roomlink,status,name_v,code)
                         room = get_room(roomlink)
-                        print(room)
                         username = room['names']
                         status = room['status']
                         indexs = 0
