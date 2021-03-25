@@ -336,7 +336,7 @@ def room(roomlink):
     global in_code,Question
     if 'user' in session:
         index = 0
-        df=pd.read_csv('questions.csv')
+        df = pd.read_csv('questions.csv')
         for i in room_links:
             if i[0] == roomlink:
 
