@@ -8,12 +8,9 @@ def init_room(l, s, n, c):
 
 
 def delete_room(link):
-    inx = 0; db = pd.read_csv('rooms.csv')
-    for i in db['link']:
-        if i == link:
-            pass # REMOVE ROOM HERE
-        else: inx += 1
-
+    db=pd.read_csv('rooms.csv')
+    db=db.drop(db[db['link']==link].index)
+    db.to_csv('rooms.csv',index=False)
 
 def get_room(link):
     global room_link, room_status, room_names, room_code
