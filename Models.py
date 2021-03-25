@@ -1,41 +1,27 @@
-from flask_sqlalchemy import SQLAlchemy
-db = SQLAlchemy()
+import pandas as pd
 
-class Room(db.Model):
-    id     = db.Column(db.Integer  , primary_key=True)
-    link   = db.Column(db.String(8), unique=False, nullable=False) # the part of the link after rooms/
-    status = db.Column(db.String,unique=False)
-    names  = db.Column(db.String,unique=False)
-    code= db.Column(db.String)
-    def __repr__(self):
-        return f"<Room {self.id}:{self.link}>"
-def init_room(link,status,names,code):
-    room= Room(link=link,status=status,names=names,code=code)
-    db.session.add(room)
-    db.session.commit()
-    return room.id
+def init_room(l, s, n, c):
+    db = pd.read_csv('rooms.csv')
+    db = db.append({'link': l, 'status': s, 'n': n, 'code': c}, ignore_index=True)
+    db.to_csv('rooms.csv', index=False)
+    # return room.id
+
 
 def delete_room(link):
-    room=Room.query.filter_by(link=link).first()
-    db.session.delete(room)
-    db.session.commit()
+    inx = 0; db = pd.read_csv('rooms.csv')
+    for i in db['link']:
+        if i == link:
+            pass # REMOVE ROOM HERE
+        else: inx += 1
 
 
 def get_room(link):
-    room=Room.query.filter_by(link=link).first()
-    if room is None:
-        return "NO SUCH ROOM"
-    return {"link":room.link, "status":room.status,"names":room.names,"code":room.code}
-def update_room(link, status="",names="",code=""):
-    """
-    link is required to identify the room 
-    insert new values for current room can change anything besides the link
-    e.g to change only the names write update_room("somelink",names="some new names")
-    """
-    room = Room.query.filter_by(link=link).first()
-    if status != "":
-        room.status=status
-    if names != "":
-        room.names=names
-    if code != "":
-        room.code=code
+    global room_link, room_status, room_names, room_code
+
+    inx = 0; db = pd.read_csv('rooms.csv')
+    for i in db['link']:
+        if i == link:
+            room_link = i; room_status = db['status'][inx]; room_names = db['names'][inx]; room_code = db['code'][inx]
+        else:
+            inx += 1
+    return {"link": room_link, "status": room_status, "names": room_names, "code": room_code}
