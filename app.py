@@ -8,8 +8,8 @@ import solution
 import pandas as pd
 from PIL import Image
 from ExtraStuff import resize, hashpass
-from Models import Room, db, init_room, update_room, delete_room, get_room
 from websockets import socketio, send, emit, join_room, leave_room
+from Models import *
 import json
 import os
 import string
@@ -22,7 +22,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rooms.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 socketio.init_app(app)
-db.init_app(app)
 UPLOAD_FOLDER = "static/pfps/"
 login_manager = LoginManager()
 app.secret_key = 'ec52e5ead3899e4a0717b9806e1125de8af3bad84ca7f511'
@@ -33,7 +32,6 @@ room_links = []
 def create_app():
     app = Flask(__name__)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rooms.db'
-    db.init_app(app)
     return app
 
 
@@ -78,12 +76,14 @@ def login():
         df = pd.read_csv('User.csv')
         user = request.form.get("uname")
         password = request.form.get("psw")
-        print(df[df['User'] == user]['Pass'].values[0] == hashpass(password))
-        session['user'] = user
         try:
-            if df[df['User'] == user]['Pass'].values[0] == hashpass(password):
-                session['user'] = user
-                return redirect(url_for('front'))
+            log_inx = 0
+            for i in df['User']:
+                if i == user:
+                    if hashpass(password) == df['Pass'][log_inx]:
+                        session['user'] = user
+                        return redirect(url_for('front'))
+                else: log_inx += 1
             else:
                 flash('Incorrect username or password')
                 return render_template("login.html")
@@ -126,32 +126,32 @@ def register():
 @login_manager.user_loader
 @app.route('/profile')
 def user_profile():
-    #try:
-    dob = ''; e_mail = ''; inx = 0
-    month = ['empty', 'January', 'F"ser"]}.png']
-    udb = pd.read_csv('User.csv')
-    df2=pd.read_csv('db.csv')
-    wins = df2[df2['Username'] == session['user']]['Wins'].values[0]
-    games = df2[df2['Username'] == session['user']]['Games'].values[0]
-    for i in udb['User']:
-        if udb['User'].values[inx] == session['user']:
-            e_mail = udb['Email'][inx]; dob = udb['DOB'][inx]
-        else: inx += 1
-    pfp = f'static\pfps\{session["user"]}'
-    # 2021-03-03
+    if 'user' in session:
+        dob = ''; e_mail = ''; inx = 0
+        month = ['empty', 'January', 'F"ser"]}.png']
+        udb = pd.read_csv('User.csv')
+        df2=pd.read_csv('db.csv')
+        wins = df2[df2['Username'] == session['user']]['Wins'].values[0]
+        games = df2[df2['Username'] == session['user']]['Games'].values[0]
+        for i in udb['User']:
+            if udb['User'].values[inx] == session['user']:
+                e_mail = udb['Email'][inx]; dob = udb['DOB'][inx]
+            else: inx += 1
+        pfp = f'static\pfps\{session["user"]}.png'
+        # 2021-03-03
 
-    doby = dob[0:4]
-    if dob[5] == '0':
-        dobm = month[int(dob[6])]
-    else: dobm = month[int(dob[5:6])]
-    if dob[8] == '0':
-        dobd = dob[9]
-    else: dobd = dob[8:9]
+        doby = dob[0:4]
+        if dob[5] == '0':
+            dobm = month[int(dob[6])]
+        else: dobm = month[int(dob[5:6])]
+        if dob[8] == '0':
+            dobd = dob[9]
+        else: dobd = dob[8:9]
 
-    return render_template('profile.html', w=wins, pfp=pfp, g=games, u=session['user'], e=e_mail, d=dobd, m=dobm, y=doby)
-    #except:
-     #   flash("Please login or create an account first")
-      #  return redirect(url_for('login'))
+        return render_template('profile.html', w=wins, pfp=pfp, g=games, u=session['user'], e=e_mail, d=dobd, m=dobm, y=doby)
+    else:
+        flash("Please login or create an account first")
+        return redirect(url_for('login'))
 
 @app.route('/code', methods=['GET', 'POST'])
 def code():
@@ -424,7 +424,7 @@ print('YOUR ANSWER')
                 index += 1
         else:
             return render_template('404.html')
-    else:solution
+    else: pass
 
 """ @app.route("/testdb", methods=["GET","POST"])
 def testdb():
@@ -442,4 +442,4 @@ if __name__ == '__main__':
 
 ## @Nuke Ninja 
 # call init_room(roomlink, status,names,code) when the room is created and delete(roomlink) when you delete it.
-# call update_room(roomlink, whatever you want to change) and get_room(roomlink) to get all the values as a dict. 
+# call update_room(roomlink, whatever you want to change) and get_room(roomlink) to get all the values as a dict.

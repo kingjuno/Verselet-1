@@ -1,9 +1,7 @@
 from PIL import Image 
 
 def hashpass(password:str):
-    # imports
     import hashlib, base64
-    # hashing
     a = hashlib.sha256(); a.update(bytes(password.encode())); b = []
     base = hashlib.sha512()
     md = hashlib.md5()
