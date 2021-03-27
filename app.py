@@ -80,12 +80,12 @@ def login():
             log_inx = 0
             for i in df['User']:
                 if i == user:
-                    if password == df['Pass'][log_inx]:
+                    if hashpass(password) == df['Pass'][log_inx]:
                         session['user'] = user
                         return redirect(url_for('front'))
                 else: log_inx += 1
             else:
-                flash('User does not exist')
+                flash('Incorrect username or password')
                 return render_template("login.html")
         except:
             flash('Incorrect username or password')
@@ -126,7 +126,7 @@ def register():
 @login_manager.user_loader
 @app.route('/profile')
 def user_profile():
-    try:
+    if 'user' in session:
         dob = ''; e_mail = ''; inx = 0
         month = ['empty', 'January', 'F"ser"]}.png']
         udb = pd.read_csv('User.csv')
@@ -137,7 +137,7 @@ def user_profile():
             if udb['User'].values[inx] == session['user']:
                 e_mail = udb['Email'][inx]; dob = udb['DOB'][inx]
             else: inx += 1
-        pfp = f'static\pfps\{session["user"]}'
+        pfp = f'static\pfps\{session["user"]}.png'
         # 2021-03-03
 
         doby = dob[0:4]
@@ -149,7 +149,7 @@ def user_profile():
         else: dobd = dob[8:9]
 
         return render_template('profile.html', w=wins, pfp=pfp, g=games, u=session['user'], e=e_mail, d=dobd, m=dobm, y=doby)
-    except:
+    else:
         flash("Please login or create an account first")
         return redirect(url_for('login'))
 
