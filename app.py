@@ -138,7 +138,6 @@ def user_profile():
                 e_mail = udb['Email'][inx]; dob = udb['DOB'][inx]
             else: inx += 1
         pfp = f'static\pfps\{session["user"]}.png'
-        # 2021-03-03
 
         doby = dob[0:4]
         if dob[5] == '0':
@@ -333,7 +332,7 @@ def play():
 
 @app.route(f'/play/<roomlink>', methods=['GET', 'POST'])
 def room(roomlink):
-    global in_code,Question
+    global in_code,Question, q_answer
     if 'user' in session:
         index = 0
         df = pd.read_csv('questions.csv')
@@ -369,12 +368,10 @@ print('YOUR ANSWER')
                         for qw in df['Questions']:
                             if qw == room_links[index][1]:
                                 if df['type'][qinx]=='code':
-                                    print(df['Answers'][qinx])
-                                    b=[]
-                                    input1=(df['Inputs'][qinx])
+                                    b = []
+                                    input1 = (df['Inputs'][qinx])
                                     exec(df['Answers'][qinx])
                                     q_answer='\n'+'\n'.join(b)
-                                    print(q_answer)
                                 else:
                                     q_answer = df['Answers'][qinx]
 
@@ -385,13 +382,11 @@ print('YOUR ANSWER')
                         lang = request.form.get('lang')
                         result, errors = compiler(in_code, lang, df['Inputs'][qinx])
                         result = result
-                        q_answer = q_answer
-                        print(q_answer, result)
-                        a=[]
-                        if result and len(result)==len(q_answer):
-                            answer=q_answer.replace('\n','')
-                            r=result.replace('\n','')
-                            for z in range(len(answer)):
+                        a = []
+                        if result and len(result) == len(q_answer):
+                            answer = q_answer.replace('\n','')
+                            r = result.replace('\n','')
+                            for z in range(int(len(answer))):
                                 if not answer[z] == r[z]:
                                     a.append('Nope, this one is wrong too')
                         else:
@@ -400,12 +395,13 @@ print('YOUR ANSWER')
                             return render_template('compiler.html', e=errors, c=in_code, que=room_links[index][1], link=roomlink, q=f'Result : {result == q_answer}' if result else '')
                         else:
                             return render_template('compiler.html', r=result, c=in_code, q=f'Result : True' if not a else 'Result : False', que=room_links[index][1], link=roomlink, z=f"Expected : {q_answer}")
+
                     elif request.form['btnc'] == 'submit':
                         a = []
                         if a:
-                            answer="Wrong"
+                            answer = "Incorrect"
                         else:
-                            answer="Correct"
+                            answer = "Correct"
                         name_v = session['user']
                         status = "done"
                         code = "nothing"
