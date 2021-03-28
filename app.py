@@ -367,7 +367,7 @@ print('YOUR ANSWER')
                         qinx = 0
                         for qw in df['Questions']:
                             if qw == room_links[index][1]:
-                                if df['type'][qinx]=='code':
+                                if df['type'][qinx] == 'code':
                                     b = []
                                     input1 = (df['Inputs'][qinx])
                                     exec(df['Answers'][qinx])
@@ -383,11 +383,12 @@ print('YOUR ANSWER')
                         result, errors = compiler(in_code, lang, df['Inputs'][qinx])
                         result = result
                         a = []
-                        if result and len(result) == len(q_answer):
+                        if len(result) == len(q_answer):
                             answer = q_answer.replace('\n','')
-                            r = result.replace('\n','')
                             for z in range(int(len(answer))):
-                                if not answer[z] == r[z]:
+                                print('\n\n ANSWER[Z]', answer[z], '\n\n')
+                                print('\n\n RESULT[Z]', result[z], '\n\n')
+                                if not answer[z] == result[z]:
                                     a.append('Nope, this one is wrong too')
                         else:
                             a.append('No chance of this being correct')
@@ -402,17 +403,15 @@ print('YOUR ANSWER')
                             answer = "Incorrect"
                         else:
                             answer = "Correct"
-                        name_v = session['user']
-                        status = "done"
-                        code = "nothing"
-                        init_room(roomlink,status,name_v,code)
+                        name_v = session['user']; status = "done"; code = "nothing"
+                        init_room(roomlink, status, name_v, code)
                         room = get_room(roomlink)
                         username = room['names']
                         status = room['status']
                         indexs = 0
                         for index in room['names']:
-                            indexs+=1
-                        return render_template('result.html', username=username,status=status,answer=answer,index=indexs)
+                            indexs += 1
+                        return render_template('result.html', username=username, status=status, answer=answer, index=indexs)
 
 
                 return render_template('compiler.html', u=session['user'], que=room_links[index][1], link=roomlink,c=in_code)

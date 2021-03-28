@@ -4,6 +4,7 @@
 {% block content %}
 
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Lexend&display=swap');
 
    body {
     background-image: url({{ url_for('static', filename='dots.gif')}});
@@ -39,7 +40,7 @@
 
 <form method="post">
 
-    <div class="row" style="margin-left: 5%;">
+    <div class="row" style="margin-left: 5%">
 
         <div class="column" style="margin-top: 1.5%; margin-left: -3%;">
             <textarea style="color: white; background-color: #222222; margin-left: 3%; margin-bottom: 10%; resize: none;" name="lang">Python 3</textarea>
@@ -52,14 +53,14 @@
 
             <div class="column" style="margin-left: -80%; width: 180%;">
 
-                <textarea style="margin-top: 1%; margin-right: 10%; width: 50%; color: white; background-color: #222222; resize: none;" spellcheck="false" name="input" id="e" rows="60" cols="100" placeholder="Enter code here">{{c}}</textarea>
+                <textarea style="font-family: 'Lexend', sans-serif; margin-top: 1%; margin-right: 10%; width: 50%; color: white; background-color: #222222; resize: none;" spellcheck="false" name="input" id="e" rows="55" cols="100" placeholder="Enter code here">{{c}}</textarea>
 
             </div>
 
             <div class="column" style="margin-top: -6%; margin-left: -80%; width: 180%;">
-                <textarea style="width: 50%; margin-top: -250%; margin-left: 54%; color: white; background-color: #222222; resize: none;" spellcheck="false" id="o" name="out" rows="59" cols="100" placeholder="Output" readonly>{{r}}{{e}}{{q}}
+                <textarea style="font-family: 'Lexend', sans-serif; width: 50%; margin-top: -250%; margin-left: 54%; color: white; background-color: #222222; resize: none;" spellcheck="false" id="o" name="out" rows="54" cols="100" placeholder="Output" readonly>{{r}}{{e}}{{q}}
 {{z}}</textarea>
-                <textarea style="width: 50%; height: 40%; margin-top: -110%; margin-left: 54%; color: white; background-color: #222222; resize: none;" spellcheck="false" id="q" name="qout" rows="25" cols="100" placeholder="Question" readonly>{{ que }}</textarea>
+                <textarea style="font-family: 'Lexend', sans-serif; width: 50%; height: 40%; margin-top: -110%; margin-left: 54%; color: white; background-color: #222222; resize: none;" spellcheck="false" id="q" name="qout" rows="23" cols="100" placeholder="Question" readonly>{{ que }}</textarea>
             </div>
 
         </div>
