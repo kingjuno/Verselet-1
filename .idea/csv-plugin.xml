@@ -59,6 +59,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\templates\compiler.html">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\trial.py">
           <value>
             <Attribute>
