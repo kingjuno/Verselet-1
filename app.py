@@ -158,7 +158,7 @@ def code():
         in_code = request.form.get('input')
         lang = request.form.get('lang')
         result, errors = compiler(in_code, lang)
-        result = result.replace("\n", '\n')
+        # result = result.replace("\n", '\n')
     else:
         result = ''; in_code = ''; errors = ''
     if errors != None:
