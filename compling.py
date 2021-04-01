@@ -23,7 +23,7 @@ def compiler(code, lang, _input=None, save=False):
         while(output_json.json()['status']== 'IN-QUEUE'):
             output_json = requests.post("https://ide.geeksforgeeks.org/submissionResult.php",data={"sid":r.json()["sid"],"requestType":"fetchResults"})
         try:
-            return str(output_json.json()['output']),None
+            return str(output_json.json()['output']), None
         except:
             return None, str(output_json.json()[error([key for key in output_json.json().keys()])])
     except: 

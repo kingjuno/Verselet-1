@@ -379,19 +379,17 @@ print('YOUR ANSWER')
                             else: qinx += 1
 
                         in_code = request.form.get('input')
-                        lang = request.form.get('lang')
-                        result, errors = compiler(in_code, lang, df['Inputs'][qinx])
-                        result = result
+                        lang = 'Python3'
+                        result, errors = compiler(in_code, lang, _input=df['Inputs'][qinx])
                         a = []
-                        if len(result) == len(q_answer):
-                            answer = q_answer.replace('\n','')
-                            for z in range(int(len(answer))):
-                                print('\n\n ANSWER[Z]', answer[z], '\n\n')
-                                print('\n\n RESULT[Z]', result[z], '\n\n')
-                                if not answer[z] == result[z]:
-                                    a.append('Nope, this one is wrong too')
-                        else:
-                            a.append('No chance of this being correct')
+                        if result != None:
+                            if len(result) == len(q_answer):
+                                answer = q_answer
+                                for z in range(int(len(answer))):
+                                    if str(answer[z]) != str(result[z]):
+                                        a.append('Nope, this one is wrong too')
+                            else:
+                                a.append('No chance of this being correct')
                         if errors is not None:
                             return render_template('compiler.html', e=errors, c=in_code, que=room_links[index][1], link=roomlink, q=f'Result : {result == q_answer}' if result else '')
                         else:
