@@ -15,6 +15,8 @@ import os
 import string
 import random
 from compling import *
+import ast
+
 q = 0
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
@@ -401,13 +403,36 @@ print('YOUR ANSWER')
                             answer = "Incorrect"
                         else:
                             answer = "Correct"
-                        name_v = session['user']; status = "done"; code = "nothing"
-                        init_room(roomlink, status, name_v, code)
+
+                        roomdb = pd.read_csv('rooms.csv'); roomi = 0
+
+                        for i in roomdb['link']:
+                            if roomi > len(roomdb['link']):
+                                break
+                            else:
+                                if roomlink == i:
+                                    userstr = roomdb['n'][roomi]
+                                    userl = ast.literal_eval(userstr)
+                                    userl.append(session['user'])
+                                    print(str(userl))
+
+                                    roomdb.replace(to_replace=roomdb.n[roomi], value=str(userl),
+                                               inplace=True)
+                                    roomdb.to_csv('rooms.csv', index=False)
+                                    break
+                                else:
+                                    roomi += 1
+
+                        else:
+                            name_v = session['user']; status = "done"; code = "nothing"
+                            init_room(roomlink, status, [name_v], code)
+
                         room = get_room(roomlink)
-                        username = room['names']
-                        status = room['status']
+                        # [["link", room_link], ["status", room_status], ["names", room_names], ["code", room_code]]
+                        username = session['user']
+                        status = room[1][1]
                         indexs = 0
-                        for index in room['names']:
+                        for index in room[2]:
                             indexs += 1
                         return render_template('result.html', username=username, status=status, answer=answer, index=indexs)
 

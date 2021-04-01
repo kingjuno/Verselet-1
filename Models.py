@@ -18,7 +18,7 @@ def get_room(link):
     inx = 0; db = pd.read_csv('rooms.csv')
     for i in db['link']:
         if i == link:
-            room_link = i; room_status = db['status'][inx]; room_names = db['names'][inx]; room_code = db['code'][inx]
+            room_link = i; room_status = db['status'][inx]; room_names = db['name'][inx]; room_code = db['code'][inx]
+            return [["link", room_link], ["status", room_status], ["names", room_names], ["code", room_code]]
         else:
             inx += 1
-    return {"link": room_link, "status": room_status, "names": room_names, "code": room_code}
