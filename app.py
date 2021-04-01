@@ -156,7 +156,7 @@ def user_profile():
 def code():
     if request.method == "POST":
         in_code = request.form.get('input')
-        lang = request.form.get('lang')
+        lang = 'Python'
         result, errors = compiler(in_code, lang)
         # result = result.replace("\n", '\n')
     else:
