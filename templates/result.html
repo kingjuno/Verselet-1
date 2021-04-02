@@ -39,10 +39,10 @@
 <center>
 <h1 class="text">Status</h1>
 <div class="text">
-<table>
-<tr><th>Name</th><th>Status</th><th>Answer</th></tr>
-<tr><td>{{username}}</td><td>{{status}}</td><td>{{answer}}</td></tr>
-</table>
+<div style="color: white;">{{ username }} {{ status }} {{ answer }}</div>
+{% for index in userlist %}
+    <p style="color: white;">{{ index }}</p>
+{% endfor %}
 </div>
 </center>
 {% endblock %}

@@ -53,7 +53,7 @@ def front():
                 room_links.append([link])
 
                 df = pd.read_csv('questions.csv')
-                Question=df['Questions'][random.randint(0,df.index[-1])]
+                Question = df['Questions'][random.randint(0, df.index[-1])]
 
                 for i in room_links:
                     if i == link:
@@ -61,8 +61,23 @@ def front():
                         link = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
                         room_links.append([link])
 
+                init_room(link, 'on_going', session['user'], [session['user']])
                 return redirect(f"/play/{link}")
             elif request.form['x'] == 'search':
+                search_link = request.form.get('join'); dbroom = pd.read_csv('rooms.csv'); roomi = 0
+                for i in dbroom['link']:
+                    if i == search_link:
+                        if roomi < len(dbroom['link']):
+                            usern = dbroom.n[roomi]
+                            userl = ast.literal_eval(usern)
+                            userl.append(session['user'])
+                            dbroom.replace(to_replace=dbroom.n[roomi], value=str(userl), inplace=True)
+                            dbroom.to_csv('rooms.csv', index=False)
+                            break
+                        else:
+                            break
+                else:
+                    roomi += 1
                 return redirect(f"play/{request.form.get('join')}")
         return render_template('homepage.html')
 
@@ -334,9 +349,9 @@ def play():
 
 @app.route(f'/play/<roomlink>', methods=['GET', 'POST'])
 def room(roomlink):
-    global in_code,Question, q_answer
+    global in_code,Question, q_answer, userl, a
     if 'user' in session:
-        index = 0
+        index = 0;
         df = pd.read_csv('questions.csv')
         for i in room_links:
             if i[0] == roomlink:
@@ -364,6 +379,7 @@ print('YOUR ANSWER')
                     else: qindex += 1
 
                 if request.method == "POST":
+                    is_correct = False
                     if request.form['btnc'] == 'run':
 
                         qinx = 0
@@ -383,8 +399,8 @@ print('YOUR ANSWER')
                         in_code = request.form.get('input')
                         lang = 'Python3'
                         result, errors = compiler(in_code, lang, _input=df['Inputs'][qinx])
-                        a = []
                         if result != None:
+                            a = []
                             if len(result) == len(q_answer):
                                 answer = q_answer
                                 for z in range(int(len(answer))):
@@ -395,49 +411,34 @@ print('YOUR ANSWER')
                         if errors is not None:
                             return render_template('compiler.html', e=errors, c=in_code, que=room_links[index][1], link=roomlink, q=f'Result : {result == q_answer}' if result else '')
                         else:
+                            if a != []:
+                                pass
+                            else: is_correct = True
                             return render_template('compiler.html', r=result, c=in_code, q=f'Result : True' if not a else 'Result : False', que=room_links[index][1], link=roomlink, z=f"Expected : {q_answer}")
 
                     elif request.form['btnc'] == 'submit':
-                        a = []
-                        if a:
-                            answer = "Incorrect"
-                        else:
+                        if is_correct:
                             answer = "Correct"
-
-                        roomdb = pd.read_csv('rooms.csv'); roomi = 0
-
-                        for i in roomdb['link']:
-                            if roomi > len(roomdb['link']):
-                                break
-                            else:
-                                if roomlink == i:
-                                    userstr = roomdb['n'][roomi]
-                                    userl = ast.literal_eval(userstr)
-                                    userl.append(session['user'])
-                                    print(str(userl))
-
-                                    roomdb.replace(to_replace=roomdb.n[roomi], value=str(userl),
-                                               inplace=True)
-                                    roomdb.to_csv('rooms.csv', index=False)
-                                    break
-                                else:
-                                    roomi += 1
-
                         else:
-                            name_v = session['user']; status = "done"; code = "nothing"
-                            init_room(roomlink, status, [name_v], code)
+                            answer = "Inorrect"
 
+                        roomdb = pd.read_csv('rooms.csv')
                         room = get_room(roomlink)
-                        # [["link", room_link], ["status", room_status], ["names", room_names], ["code", room_code]]
+                        # [["link", room_link], ["status", room_status], ['name', room_name], ["n", room_names]]
+                        print(room)
+                        print(room[3][1])
+                        userl = ast.literal_eval(room[3][1])
+                        print(userl)
                         username = session['user']
                         status = room[1][1]
                         indexs = 0
                         for index in room[2]:
                             indexs += 1
-                        return render_template('result.html', username=username, status=status, answer=answer, index=indexs)
 
+                        print(userl)
+                        return render_template('result.html', username=username, status=status, answer=answer, index=indexs, userlist=userl)
 
-                return render_template('compiler.html', u=session['user'], que=room_links[index][1], link=roomlink,c=in_code)
+                return render_template('compiler.html', u=session['user'], que=room_links[index][1], link=roomlink, c=in_code)
             else:
                 index += 1
         else:
