@@ -425,17 +425,13 @@ print('YOUR ANSWER')
                         roomdb = pd.read_csv('rooms.csv')
                         room = get_room(roomlink)
                         # [["link", room_link], ["status", room_status], ['name', room_name], ["n", room_names]]
-                        print(room)
-                        print(room[3][1])
                         userl = ast.literal_eval(room[3][1])
-                        print(userl)
                         username = session['user']
                         status = room[1][1]
                         indexs = 0
                         for index in room[2]:
                             indexs += 1
 
-                        print(userl)
                         return render_template('result.html', username=username, status=status, answer=answer, index=indexs, userlist=userl)
 
                 return render_template('compiler.html', u=session['user'], que=room_links[index][1], link=roomlink, c=in_code)

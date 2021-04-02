@@ -27,22 +27,55 @@
  .text{
      color: whitesmoke;
  }
- table,th,td{
-     border: 3px solid whitesmoke;
-     border-collapse: collapse;
+ .styled-table {
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
  }
- th,td{
-   text-align: center;
-   vertical-align: middle;
+
+ .styled-table thead tr {
+    background-color: #A44AA4;
+    color: #ffffff;
+    text-align: left;
  }
+
+ .styled-table th,
+.styled-table td {
+    padding: 12px 15px;
+}
+
+.styled-table tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+
 </style>
 <center>
-<h1 class="text">Status</h1>
+
+<div class="big_text"><span style="color: #A44AA4; margin-top: 3%;">R</span>esults</div><br><br><br><br><br><br>
+
 <div class="text">
-<div style="color: white;">{{ username }} {{ status }} {{ answer }}</div>
-{% for index in userlist %}
-    <p style="color: white;">{{ index }}</p>
-{% endfor %}
+<table class="styled-table">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Output</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            {% for i in userlist %}
+
+                <td>{{ i }}</td>
+
+            {% endfor %}
+            <td>{{ answer }}</td>
+        </tr>
+    </tbody>
+</table>
 </div>
 </center>
 {% endblock %}
