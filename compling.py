@@ -3,7 +3,7 @@ import requests
 
 def error(key):
     for i in key:
-        if i[-5:]=='Error':
+        if i[-5:] == 'Error':
             return i 
         
 gfg_compiler_api_endpoint = "https://ide.geeksforgeeks.org/main.php"

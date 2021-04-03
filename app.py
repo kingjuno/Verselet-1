@@ -70,7 +70,9 @@ def front():
                         if roomi < len(dbroom['link']):
                             usern = dbroom.n[roomi]
                             userl = ast.literal_eval(usern)
-                            userl.append(session['user'])
+                            if session['user'] in userl:
+                                break
+                            else: userl.append(session['user'])
                             dbroom.replace(to_replace=dbroom.n[roomi], value=str(userl), inplace=True)
                             dbroom.to_csv('rooms.csv', index=False)
                             break

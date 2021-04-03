@@ -83,24 +83,18 @@
             <button style="font-size: 17px; font-family: 'Work Sans', sans-serif; width: 18%; margin-left: 3%;" type="submit" name="btnc" value="run">Run Code</button>
             <div class="small_text">The room's code is : <span style="color: #A44AA4"><br>{{ link }}</span></div>
         </div>
+
         <div class="column">
 
 
-            <div class="column">
-                <div class="container">
-                  <div class="backdrop">
-                    <div class="custom-area">
-                        <!-- Cloned text with colors will go here -->
-                    </div>
-                  </div>
-                <textarea style="color: black; font-size: 14px; font-family: 'Lexend', sans-serif; margin-left: -40%; width: 40%; height: 850px; color: white; resize: none;" spellcheck="false" name="input" id="codetext" rows="55" cols="100" placeholder="Enter code here">{{c}}</textarea>
-            </div>
+            <div class="column" style="margin-left: -80%; width: 180%;">
+
+                <textarea style="margin-top: 1%; margin-right: 10%; width: 50%; color: white; background-color: #222222; resize: none;" spellcheck="false" name="input" id="e" rows="60" cols="100" placeholder="Enter code here">{{c}}</textarea>
 
             </div>
 
-            <div class="column" style="margin-top: 106.5%; margin-left: -80%; width: 180%;">
-                <textarea style="font-size: 14px; font-family: 'Lexend', sans-serif; width: 50%; margin-top: -250%; margin-left: 54%; color: white; background-color: #222222; resize: none;" spellcheck="false" id="o" name="out" rows="54" cols="100" placeholder="Output" readonly>{{r}}{{e}}{{q}}
-{{z}}</textarea>
+            <div class="column" style="margin-top: -4%; margin-left: -80%; width: 180%;">
+                <textarea style="width: 50%; margin-top: -65%; margin-left: 54%; color: white; background-color: #222222; resize: none;" spellcheck="false" id="o" name="out" rows="60" cols="100" placeholder="Output" readonly>{{r}}{{e}}{{q}}</textarea>
                 <textarea style="font-size: 14px; font-family: 'Lexend', sans-serif; width: 50%; height: 45%; margin-top: -110%; margin-left: 54%; color: white; background-color: #222222; resize: none;" spellcheck="false" id="q" name="qout" rows="23" cols="50" placeholder="Question" readonly>{{ que }}</textarea>
             </div>
 
@@ -124,7 +118,7 @@ document.getElementById('e').addEventListener('keydown', function(e) {
 
     // put caret at right position again
     this.selectionStart =
-      this.selectionEnd = start + 1;
+      this.selectionEnd = start+1;
   }
 });
 </script>
@@ -145,35 +139,6 @@ $(document).ready(function() {
 	});
 
 });
-
-const colorMap = {"'": "green", "str": "green", "input": "#009AFF", "append": "#009AFF", "int": "#009AFF", "float": "#009AFF", "print": "#009AFF", "range": "#009AFF", "in": "#FFA200", "return": "#FFA200", "if": "#FFA200", "else": "#FFA200", "elif": "#FFA200", "for": "#FFA200", "break": "#FFA200", "True": "#FFA200", "False": "#FFA200", "pass": "#FFA200",};
-let textArea = document.getElementById("codetext");
-let customArea = document.querySelector(".custom-area");
-let backdrop = document.querySelector(".backdrop");
-
-// Event listeners.
-
-textArea.addEventListener("input", function()
-{
-    customArea.innerHTML = applyColors(textArea.value);
-});
-
-textArea.addEventListener("scroll", function()
-{
-    backdrop.scrollTop = textArea.scrollTop;
-});
-
-function applyColors(text)
-{
-    let re = new RegExp(Object.keys(colorMap).join("|"), "gi");
-
-    return text.replace(re, function(m)
-    {
-        let c = colorMap[m.toLowerCase()];
-        return `<spam style="color:${c}">${m}</spam>`;
-    });
-}
-
 </script>
 
 {% endblock %}
