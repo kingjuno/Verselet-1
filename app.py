@@ -147,7 +147,7 @@ def register():
 def user_profile():
     if 'user' in session:
         dob = ''; e_mail = ''; inx = 0
-        month = ['empty', 'January', 'F"ser"]}.png']
+        month = ['empty', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
         udb = pd.read_csv('User.csv')
         df2=pd.read_csv('db.csv')
         wins = df2[df2['Username'] == session['user']]['Wins'].values[0]
