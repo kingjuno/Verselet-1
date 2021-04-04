@@ -1,21 +1,20 @@
-from logging import debug
 from flask import Flask, render_template, request, redirect, url_for, flash, session, abort
-from flask_login import LoginManager
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-import smtplib
-import solution
-import pandas as pd
-from PIL import Image
-from ExtraStuff import resize, hashpass
 from websockets import socketio, send, emit, join_room, leave_room
-from Models import *
-import json
-import os
-import string
-import random
+from email.mime.multipart import MIMEMultipart
+from ExtraStuff import resize, hashpass
+from email.mime.text import MIMEText
+from flask_login import LoginManager
 from compling import *
+from PIL import Image
+from Models import *
+import pandas as pd
+import solution
+import smtplib
+import random
+import string
+import json
 import ast
+import os
 
 q = 0
 app = Flask(__name__)
@@ -46,31 +45,57 @@ def page_not_found(e):
 @app.route('/', methods=['GET', 'POST'])
 def front():
     global q, in_code,Question
+    usdb = pd.read_csv('db.csv'); pi = 0; usl = ''; btns = []
+
     if 'user' in session:
+
+        for i in usdb.username.values:
+            if i == session['user']:
+                usl = usdb['current'][pi]
+                break
+            else:
+                pi += 1
         if request.method == "POST":
+            usdb = pd.read_csv('db.csv'); pi = 0; usl = ''; btns = []
+
+            for i in usdb.username.values:
+                if i == session['user']:
+                    usl = usdb['current'][pi]
+                    break
+                else:
+                    pi += 1
+
             if request.form['x'] == 'create':
-                link = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
-                room_links.append([link])
+                if usl == 0:
+                    link = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
+                    room_links.append([link])
 
-                df = pd.read_csv('questions.csv'); usdb = pd.read_csv('db.csv')
-                Question = df['Questions'][random.randint(0, df.index[-1])]
+                    df = pd.read_csv('questions.csv')
+                    Question = df['Questions'][random.randint(0, df.index[-1])]
 
-                for i in room_links:
-                    if i == link:
-                        room_links.remove(link)
-                        link = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
-                        room_links.append([link])
+                    for i in room_links:
+                        if i == link:
+                            room_links.remove(link)
+                            link = ''.join(
+                                random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
+                            room_links.append([link])
 
-                for i in usdb.username.values:
-                    if i == session['user']:
-                        usdb.loc[usdb["username"] == session['user'], "games"] += 1
-                        usdb.to_csv('db.csv', index=False)
-                        break
+                    for i in usdb.username.values:
+                        if i == session['user']:
+                            usdb.loc[usdb["username"] == session['user'], "games"] += 1
+                            usdb.loc[usdb["username"] == session['user'], "current"] = link
+                            usdb.to_csv('db.csv', index=False)
+                            break
 
-                init_room(link, 'on_going', session['user'], [session['user']])
-                return redirect(f"/play/{link}")
+                    init_room(link, 'on_going', session['user'], [session['user']])
+                    return redirect(f"/play/{link}")
+                else:
+                    flash('You are already in a game.')
+                    btns.append('Rejoin game')
+                    return render_template('homepage.html', b=btns)
+
             elif request.form['x'] == 'search':
-                search_link = request.form.get('join'); dbroom = pd.read_csv('rooms.csv'); roomi = 0
+                search_link = request.form.get('join'); dbroom = pd.read_csv('rooms.csv'); usdb = pd.read_csv('db.csv'); roomi = 0
                 for i in dbroom['link']:
                     if i == search_link:
                         if roomi < len(dbroom['link']):
@@ -78,7 +103,14 @@ def front():
                             userl = ast.literal_eval(usern)
                             if session['user'] in userl:
                                 break
-                            else: userl.append(session['user'])
+                            else:
+                                for i in usdb.username.values:
+                                    if i == session['user']:
+                                        usdb.loc[usdb["username"] == session['user'], "games"] += 1
+                                        usdb.loc[usdb["username"] == session['user'], "current"] = search_link
+                                        usdb.to_csv('db.csv', index=False)
+                                        break
+                                userl.append(session['user'])
                             dbroom.replace(to_replace=dbroom.n[roomi], value=str(userl), inplace=True)
                             dbroom.to_csv('rooms.csv', index=False)
                             break
@@ -87,10 +119,9 @@ def front():
                 else:
                     roomi += 1
                 return redirect(f"play/{request.form.get('join')}")
-        return render_template('homepage.html')
-
-    else: return render_template('front.html')
-
+    if usl != 0:
+        btns.append('Rejoin game')
+    return render_template('homepage.html', b=btns)
 
 @login_manager.user_loader
 @app.route('/login', methods=['GET', 'POST'])
@@ -135,9 +166,8 @@ def register():
             return redirect(url_for('register'))
         else:
             df2 = pd.read_csv('db.csv')
-            df = df.append({'User': user, 'Pass': password, 'Email': email, 'Id': len(df) + 1, 'DOB': dob},
-                           ignore_index=True)
-            df2 = df2.append({'wins': 0, 'games': 0, 'time': 0, 'username': user}, ignore_index=True)
+            df = df.append({'User': user, 'Pass': password, 'Email': email, 'Id': len(df) + 1, 'DOB': dob}, ignore_index=True)
+            df2 = df2.append({'wins': 0, 'games': 0, 'time': 0, 'username': user, 'current': '0'}, ignore_index=True)
             df2.to_csv('db.csv', index=False)
             df.to_csv('User.csv', index=False)
             session['user'] = user
@@ -353,7 +383,7 @@ def room(roomlink):
     global in_code,Question, q_answer, userl, a
     if 'user' in session:
         index = 0;
-        df = pd.read_csv('questions.csv')
+        df = pd.read_csv('questions.csv'); udb = pd.read_csv('db.csv')
         for i in room_links:
             if i[0] == roomlink:
 
@@ -418,6 +448,7 @@ print('YOUR ANSWER')
                             return render_template('compiler.html', r=result, c=in_code, q=f'Result : True' if not a else 'Result : False', que=room_links[index][1], link=roomlink, z=f"Expected : {q_answer}")
 
                     elif request.form['btnc'] == 'submit':
+                        udb.loc[udb["username"] == session['user'], "current"] = ''
                         if is_correct:
                             answer = "Correct"
                         else:
