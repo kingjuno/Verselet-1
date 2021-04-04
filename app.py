@@ -52,7 +52,7 @@ def front():
                 link = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
                 room_links.append([link])
 
-                df = pd.read_csv('questions.csv')
+                df = pd.read_csv('questions.csv'); usdb = pd.read_csv('db.csv'); dbin = 0
                 Question = df['Questions'][random.randint(0, df.index[-1])]
 
                 for i in room_links:
@@ -60,6 +60,16 @@ def front():
                         room_links.remove(link)
                         link = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
                         room_links.append([link])
+
+                for i in usdb.username.values:
+                    if i == session['user']:
+                        if dbin < len(usdb.username.values):
+                            val = int(usdb.games[dbin]) + 1
+                            usdb.replace(to_replace=usdb.games[dbin], value=str((int(usdb.games[dbin])+1)), inplace=True)
+                            usdb.to_csv('db.csv', index=False)
+                            break
+                        else: break
+                    else: dbin += 1
 
                 init_room(link, 'on_going', session['user'], [session['user']])
                 return redirect(f"/play/{link}")
@@ -84,7 +94,6 @@ def front():
         return render_template('homepage.html')
 
     else: return render_template('front.html')
-
 
 
 @login_manager.user_loader
@@ -149,9 +158,9 @@ def user_profile():
         dob = ''; e_mail = ''; inx = 0
         month = ['empty', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
         udb = pd.read_csv('User.csv')
-        df2=pd.read_csv('db.csv')
-        wins = df2[df2['Username'] == session['user']]['Wins'].values[0]
-        games = df2[df2['Username'] == session['user']]['Games'].values[0]
+        df2 = pd.read_csv('db.csv')
+        wins = df2[df2['username'] == session['user']]['wins'].values[0]
+        games = df2[df2['username'] == session['user']]['games'].values[0]
         for i in udb['User']:
             if udb['User'].values[inx] == session['user']:
                 e_mail = udb['Email'][inx]; dob = udb['DOB'][inx]
@@ -198,7 +207,7 @@ def aboutus():
 def settings_page():
     if 'user' in session:
         try:
-
+            print('\n\n1111111111111\n\n')
             # PASSING ALL INFO TO DISPLAY
 
             dob = ''; e_mail = ''; inx = 0
@@ -206,11 +215,14 @@ def settings_page():
                      'July', 'August', 'September', 'October', 'November', 'December']
             df2 = pd.read_csv('db.csv')
             udb = pd.read_csv('User.csv')
-            wins = df2[df2['Username'] == session['user']]['Wins'].values[0]
-            games = df2[df2['Username'] == session['user']]['Games'].values[0]
+            wins = df2[df2['username'] == session['user']]['wins'].values[0]
+            games = df2[df2['username'] == session['user']]['games'].values[0]
+            print('\n\n22222222222222222\n\n')
             for i in udb['User']:
                 if udb['User'].values[inx] == session['user']: e_mail = udb['Email'][inx];dob = udb['DOB'][inx]
                 else: inx += 1
+
+            print('\n\n33333333333333\n\n')
 
             # DOING THE ACTUAL CHANGES
 
@@ -226,11 +238,9 @@ def settings_page():
                                 'passedit') != "" or uploaded_file.filename != "":
                             # CHECK IF PASSWORD IS CORRECT
                             if hashpass(request.form.get('p')) == df.Pass[inx]:
-                                print('password is correct')
                                 index = 0
                                 # USERNAME EDIT
                                 if request.form.get('unameedit') != "":
-                                    print('username is filled')
                                     if request.form.get('unameedit') in list(df.User):
                                         flash("Username already taken")
                                         settings_page()
@@ -239,24 +249,19 @@ def settings_page():
                                         df.replace(to_replace=df.User[inx], value=request.form.get('unameedit'),
                                                    inplace=True)
                                         df.to_csv('User.csv', index=False)
-                                        print('replaced username in db')
                                         for j in ud.Username:
                                             if j == session['user']:
                                                 ud.replace(to_replace=ud.Username[inx],
                                                            value=request.form.get('unameedit'),
                                                            inplace=True)
                                                 ud.to_csv('db.csv', index=False)
-                                                print('replaced username in user_db')
                                                 os.rename('static/pfps/' + session['user'] + '.png',
                                                           'static/pfps/' + request.form.get('unameedit') + '.png')
-                                                print('changed pfp name')
                                                 session['user'] = request.form.get('unameedit')
-                                                print('session user set')
                                             else:
                                                 index += 1
                                 # EMAIL EDIT
                                 if request.form.get('emailedit') != "":
-                                    print('email is filled')
                                     if request.form.get('emailedit') in list(df.Email):
                                         flash("An account with this email address already exists")
                                         settings_page()
@@ -265,7 +270,6 @@ def settings_page():
                                         df.replace(to_replace=df.Email[inx], value=request.form.get('emailedit'),
                                                    inplace=True)
                                         df.to_csv('User.csv', index=False)
-                                        print('email is replaced')
                                 # PROFILE PICTURE EDIT
                                 if uploaded_file.filename != "":
                                     os.remove(UPLOAD_FOLDER + session['user'] + '.png')
@@ -274,11 +278,9 @@ def settings_page():
                                     resize(os.path.join(UPLOAD_FOLDER, i + '.png'))
                                 # PASSWORD EDIT
                                 if request.form.get('passedit') != "":
-                                    print('password needs change')
                                     df.replace(to_replace=df.Pass[inx], value=hashpass(request.form.get('passedit')),
                                                inplace=True)
                                     df.to_csv('User.csv', index=False)
-                                    print('changed pass')
                                 return render_template('homepage.html')
                             else:
                                 flash('Incorrect password')
@@ -286,9 +288,10 @@ def settings_page():
                     else:
                         inx += 1
                 return render_template('homepage.html')
+
             return render_template('settingspage.html', w=wins, g=games, u=session['user'], e=e_mail, d=dob)
         except Exception:
-            return render_template('login.html')
+            return redirect(url_for('login'))
     else:
         flash('Please login first.')
         return redirect(url_for('login'))
