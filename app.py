@@ -1,7 +1,5 @@
-
-
 from flask import Flask, render_template, request, redirect, url_for, flash, session, abort
-from websockets import socketio, send, emit, join_room, leave_room
+from websockets import socketio, send, emit, join_room, leave_room, close_room
 from email.mime.multipart import MIMEMultipart
 from ExtraStuff import resize, hashpass
 from email.mime.text import MIMEText
@@ -9,6 +7,7 @@ from flask_login import LoginManager
 from compling import *
 from PIL import Image
 from Models import *
+import threading
 import pandas as pd
 import smtplib
 import random
@@ -472,10 +471,13 @@ print('YOUR ANSWER')
                                 if roomdb.n[roomi] == '[]':
                                     roomdb.drop(roomi, axis=0, inplace=True)
                                     roomdb.to_csv('rooms.csv', index=False)
+                                    close_room(roomlink)
                             else: roomi += 1
 
                         usdb.loc[usdb["username"] == session['user'], "current"] = 'Create a game'
                         usdb.loc[udb["username"] == session['user'], "link"] = ''
+                        if room.n <= 0:
+                            close(roomlink)
 
                         usdb.to_csv('db.csv', index=False)
 
@@ -490,7 +492,3 @@ print('YOUR ANSWER')
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
-
-# @Nuke Ninja
-# call init_room(roomlink, status,names,code) when the room is created and delete(roomlink) when you delete it.
-# call update_room(roomlink, whatever you want to change) and get_room(roomlink) to get all the values as a dict.

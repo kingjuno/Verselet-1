@@ -1,4 +1,4 @@
-from flask_socketio import  SocketIO,join_room, leave_room, send , emit
+from flask_socketio import  SocketIO,join_room, leave_room, send , emit  ,close_room
 from flask import session
 socketio = SocketIO()
 
@@ -18,3 +18,6 @@ def join(data):
 def leave(data):
     leave_room(data['room'])
     send({'msg': data['username'] + " has left " + data['room']}, room=data['room'])
+
+def close(room):
+    close_room(room)
