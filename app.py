@@ -63,12 +63,9 @@ def front():
 
                 for i in usdb.username.values:
                     if i == session['user']:
-                        if dbin < len(usdb.username.values):
-                            val = int(usdb.games[dbin]) + 1
-                            usdb.replace(to_replace=usdb.games[dbin], value=str((int(usdb.games[dbin])+1)), inplace=True)
-                            usdb.to_csv('db.csv', index=False)
-                            break
-                        else: break
+                        usdb.loc[usdb["username"] == session['user'], "games"] += 1
+                        usdb.to_csv('db.csv', index=False)
+                        break
                     else: dbin += 1
 
                 init_room(link, 'on_going', session['user'], [session['user']])
