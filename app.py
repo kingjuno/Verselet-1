@@ -42,7 +42,7 @@ def page_not_found(e):
 @login_manager.user_loader
 @app.route('/', methods=['GET', 'POST'])
 def front():
-    global q, in_code,Question
+    global q, in_code,Question, usl
     usdb = pd.read_csv('db.csv'); pi = 0; ee = ''; ei = 0; return_link = ''
     if 'user' in session:
 
@@ -92,29 +92,33 @@ def front():
 
             elif request.form['x'] == 'search':
                 search_link = request.form.get('join'); dbroom = pd.read_csv('rooms.csv'); usdb = pd.read_csv('db.csv'); roomi = 0
-                for i in dbroom['link']:
-                    if i == search_link:
-                        if roomi < len(dbroom['link']):
-                            usern = dbroom.n[roomi]
-                            userl = ast.literal_eval(usern)
-                            if session['user'] in userl:
+                if usl == 'Create a game':
+                    for i in dbroom['link']:
+                        if i == search_link:
+                            if roomi < len(dbroom['link']):
+                                usern = dbroom.n[roomi]
+                                userl = ast.literal_eval(usern)
+                                if session['user'] in userl:
+                                    break
+                                else:
+                                    for i in usdb.username.values:
+                                        if i == session['user']:
+                                            usdb.loc[usdb["username"] == session['user'], "games"] += 1
+                                            usdb.loc[usdb["username"] == session['user'], "current"] = search_link
+                                            usdb.to_csv('db.csv', index=False)
+                                            break
+                                    userl.append(session['user'])
+                                dbroom.replace(to_replace=dbroom.n[roomi], value=str(userl), inplace=True)
+                                dbroom.to_csv('rooms.csv', index=False)
                                 break
                             else:
-                                for i in usdb.username.values:
-                                    if i == session['user']:
-                                        usdb.loc[usdb["username"] == session['user'], "games"] += 1
-                                        usdb.loc[usdb["username"] == session['user'], "current"] = search_link
-                                        usdb.to_csv('db.csv', index=False)
-                                        break
-                                userl.append(session['user'])
-                            dbroom.replace(to_replace=dbroom.n[roomi], value=str(userl), inplace=True)
-                            dbroom.to_csv('rooms.csv', index=False)
-                            break
-                        else:
-                            break
+                                break
+                    else:
+                        roomi += 1
+                    return redirect(f"play/{request.form.get('join')}")
                 else:
-                    roomi += 1
-                return redirect(f"play/{request.form.get('join')}")
+                    flash('You are already in a game')
+                    return render_template('homepage.html', b=usl)
 
             elif request.form['x'] == 'rejoin':
                 return redirect(f"play/{usl}")
@@ -125,9 +129,6 @@ def front():
                 break
             else:
                 pi += 1
-
-        print('\n\n', ee, '\n\n')
-        print('\n\n', type(ee), '\n\n')
 
         return render_template('homepage.html', b=ee)
     else:
