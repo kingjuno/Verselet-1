@@ -119,6 +119,10 @@ def front():
                 else:
                     roomi += 1
                 return redirect(f"play/{request.form.get('join')}")
+
+            elif request.form['x'] == 'rejoin':
+                return redirect(f"play/{usl}")
+
     if usl != 0:
         btns.append('Rejoin game')
     return render_template('homepage.html', b=btns)
@@ -473,20 +477,9 @@ print('YOUR ANSWER')
             return render_template('404.html')
     else: pass
 
-""" @app.route("/testdb", methods=["GET","POST"])
-def testdb():
-    if request.method == "POST":
-        init_room("123","some status","emil test 123", "some code")
-        update_room("123",code="some other code")
-        print(get_room("123"))
-    if request.method == "GET":
-        print(get_room("123"))
-        delete_room("123")
-        print(get_room("123")) """
-
 if __name__ == '__main__':
     socketio.run(app ,debug=True)
 
-## @Nuke Ninja 
+# @Nuke Ninja
 # call init_room(roomlink, status,names,code) when the room is created and delete(roomlink) when you delete it.
 # call update_room(roomlink, whatever you want to change) and get_room(roomlink) to get all the values as a dict.
