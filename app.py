@@ -52,7 +52,7 @@ def front():
                 link = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
                 room_links.append([link])
 
-                df = pd.read_csv('questions.csv'); usdb = pd.read_csv('db.csv'); dbin = 0
+                df = pd.read_csv('questions.csv'); usdb = pd.read_csv('db.csv')
                 Question = df['Questions'][random.randint(0, df.index[-1])]
 
                 for i in room_links:
@@ -66,7 +66,6 @@ def front():
                         usdb.loc[usdb["username"] == session['user'], "games"] += 1
                         usdb.to_csv('db.csv', index=False)
                         break
-                    else: dbin += 1
 
                 init_room(link, 'on_going', session['user'], [session['user']])
                 return redirect(f"/play/{link}")
@@ -138,7 +137,7 @@ def register():
             df2 = pd.read_csv('db.csv')
             df = df.append({'User': user, 'Pass': password, 'Email': email, 'Id': len(df) + 1, 'DOB': dob},
                            ignore_index=True)
-            df2 = df2.append({'Wins': 0, 'Games': 0, 'Avr. Time': 0, 'Username': user}, ignore_index=True)
+            df2 = df2.append({'wins': 0, 'games': 0, 'time': 0, 'username': user}, ignore_index=True)
             df2.to_csv('db.csv', index=False)
             df.to_csv('User.csv', index=False)
             session['user'] = user
