@@ -1,3 +1,5 @@
+
+
 from flask import Flask, render_template, request, redirect, url_for, flash, session, abort
 from websockets import socketio, send, emit, join_room, leave_room
 from email.mime.multipart import MIMEMultipart
@@ -42,15 +44,8 @@ def page_not_found(e):
 @login_manager.user_loader
 @app.route('/', methods=['GET', 'POST'])
 def front():
-    global q, in_code, Question, usl
+    global Question
 
-    usdb = pd.read_csv('db.csv'); pi = 0; usl = ''
-    for i in usdb.username.values:
-        if i == session['user']:
-            usl = usdb['current'][pi]
-            break
-        else:
-            pi += 1
 
     usdb = pd.read_csv('db.csv'); pi = 0; ee = ''; ei = 0; return_link = ''
     if 'user' in session:
@@ -378,19 +373,6 @@ def contactus():
         return redirect('/login')
 
 
-@app.route('/play', methods=['GET', 'POST'])
-def play():
-
-    if 'user' in session:
-        return render_template('play.html', u=session['user'])
-    else:
-        flash("Please log in")
-        return redirect(url_for('login'))
-
-
-
-
-
 @app.route(f'/play/<roomlink>', methods=['GET', 'POST'])
 def room(roomlink):
     global in_code,Question, q_answer, userl, a
@@ -466,7 +448,6 @@ print('YOUR ANSWER')
                         else:
                             answer = "Inorrect"
 
-                        roomdb = pd.read_csv('rooms.csv')
                         room = get_room(roomlink)
                         # [["link", room_link], ["status", room_status], ['name', room_name], ["n", room_names]]
                         userl = ast.literal_eval(room[3][1])
@@ -479,13 +460,24 @@ print('YOUR ANSWER')
                         return render_template('result.html', username=username, status=status, answer=answer, index=indexs, userlist=userl)
 
                     elif request.form['btnc'] == 'leave':
-                        usdb = pd.read_csv('db.csv')
-                        print(usdb.loc[usdb["username"] == session['user'], "current"])
+                        usdb = pd.read_csv('db.csv'); roomdb = pd.read_csv('rooms.csv'); roomi = 0
+
+                        for i in roomdb.link.values:
+                            if i == roomlink:
+                                usern = roomdb.n[roomi]
+                                userl = ast.literal_eval(usern)
+                                userl.remove(str(session['user']))
+                                roomdb.replace(to_replace=roomdb.n[roomi], value=str(userl), inplace=True)
+                                roomdb.to_csv('rooms.csv', index=False)
+                                if roomdb.n[roomi] == '[]':
+                                    roomdb.drop(roomi, axis=0, inplace=True)
+                                    roomdb.to_csv('rooms.csv', index=False)
+                            else: roomi += 1
+
                         usdb.loc[usdb["username"] == session['user'], "current"] = 'Create a game'
-                        print(usdb.loc[usdb["username"] == session['user'], "current"])
                         usdb.loc[udb["username"] == session['user'], "link"] = ''
 
-                        usdb.to_csv('db.csv')
+                        usdb.to_csv('db.csv', index=False)
 
                         return redirect(url_for('front'))
 
@@ -497,7 +489,7 @@ print('YOUR ANSWER')
     else: pass
 
 if __name__ == '__main__':
-    socketio.run(app ,debug=True)
+    socketio.run(app, debug=True)
 
 # @Nuke Ninja
 # call init_room(roomlink, status,names,code) when the room is created and delete(roomlink) when you delete it.
