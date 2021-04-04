@@ -23,6 +23,7 @@
     font-family: 'Open Sans', sans-serif;
     margin-left: 5%;
     margin-right: 5%;
+    background-color: #24252a;
 
 }
 
@@ -31,6 +32,22 @@
     background-color: #4B4B4B;
     cursor: pointer;
   }
+
+  .ingame {
+    background-color: #A44AA4;
+    color: white;
+    padding: 15px 30px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    border-radius: 100px;
+    font-family: 'Open Sans', sans-serif;
+    margin-left: 5%;
+    margin-right: 5%;
+  }
+
 </style>
 
 <div style="margin-left: 80%; margin-top: 2%;">
@@ -39,17 +56,18 @@
 </div>
 
 <form method="POST">
-  <button style="width: 10%; background-color: #24252a;" class="auth_button" type="submit" value="create" name="x"><b>Create a game</b></button><br>
+  {% if b == 'Create a game' %}
+    <button style="width: 10%;" class="auth_button" type="submit" value="gamemain" name="x"><b>{{ b }}</b></button><br>
+  {% else %}
+    <button style="width: 10%;" class="ingame" type="submit" value="gamemain" name="x"><b>{{ b }}</b></button><br>
+  {% endif %}
   {% with messages = get_flashed_messages(with_categories=True) %}
     {% for category, message in messages %}
       <div style="position: absolute; margin-left: 5%; margin-top: 2%; font-family: 'Roboto Mono', monospace; font-size: 17px; color: #CA0000" class="flash {{category}}">{{message}}</div>
     {% endfor %}
   {% endwith%}
   <input style="width:250px; margin-top: 5%; margin-left: 5%; border-radius: 25px; border: 2px solid #1d1d1d;" type="text" name="join" placeholder="Enter a game's code"><br>
-  <button style="width: 10%;" class="auth_button" type="submit" value="search" name="x"><b>Search for a game</b></button>
-  {% for i in b %}
-    <br><button style="margin-top: 2%; width: 10%; background-color: #A44AA4;" class="auth_button" type="submit" value="rejoin" name="x"><b>{{ i }}</b></button>
-  {% endfor %}
+  <button style="background-color: #009900; width: 10%;" class="auth_button" type="submit" value="search" name="x"><b>Search for a game</b></button>
 </form>
 
 {% endblock %}

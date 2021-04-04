@@ -8,11 +8,9 @@ from compling import *
 from PIL import Image
 from Models import *
 import pandas as pd
-import solution
 import smtplib
 import random
 import string
-import json
 import ast
 import os
 
@@ -45,19 +43,11 @@ def page_not_found(e):
 @app.route('/', methods=['GET', 'POST'])
 def front():
     global q, in_code,Question
-    usdb = pd.read_csv('db.csv'); pi = 0; usl = ''; btns = []
-
+    usdb = pd.read_csv('db.csv'); pi = 0; ee = ''; ei = 0; return_link = ''
     if 'user' in session:
 
-        for i in usdb.username.values:
-            if i == session['user']:
-                usl = usdb['current'][pi]
-                break
-            else:
-                pi += 1
         if request.method == "POST":
-            usdb = pd.read_csv('db.csv'); pi = 0; usl = ''; btns = []
-
+            usdb = pd.read_csv('db.csv'); pi = 0; usl = ''
             for i in usdb.username.values:
                 if i == session['user']:
                     usl = usdb['current'][pi]
@@ -65,8 +55,8 @@ def front():
                 else:
                     pi += 1
 
-            if request.form['x'] == 'create':
-                if usl == 0:
+            if request.form['x'] == 'gamemain':
+                if usl == 'Create a game':
                     link = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(8))
                     room_links.append([link])
 
@@ -83,16 +73,22 @@ def front():
                     for i in usdb.username.values:
                         if i == session['user']:
                             usdb.loc[usdb["username"] == session['user'], "games"] += 1
-                            usdb.loc[usdb["username"] == session['user'], "current"] = link
+                            usdb.loc[usdb["username"] == session['user'], "current"] = 'Rejoin your game'
+                            usdb.loc[usdb["username"] == session['user'], "link"] = link
                             usdb.to_csv('db.csv', index=False)
                             break
 
                     init_room(link, 'on_going', session['user'], [session['user']])
                     return redirect(f"/play/{link}")
                 else:
-                    flash('You are already in a game.')
-                    btns.append('Rejoin game')
-                    return render_template('homepage.html', b=btns)
+                    for i in usdb.username.values:
+                        if i == session['user']:
+                            return_link = usdb['link'][ei]
+                            break
+                        else:
+                            ei += 1
+
+                    return redirect(f"play/{return_link}")
 
             elif request.form['x'] == 'search':
                 search_link = request.form.get('join'); dbroom = pd.read_csv('rooms.csv'); usdb = pd.read_csv('db.csv'); roomi = 0
@@ -123,9 +119,19 @@ def front():
             elif request.form['x'] == 'rejoin':
                 return redirect(f"play/{usl}")
 
-    if usl != 0:
-        btns.append('Rejoin game')
-    return render_template('homepage.html', b=btns)
+        for i in usdb.username.values:
+            if i == session['user']:
+                ee = usdb['current'][pi]
+                break
+            else:
+                pi += 1
+
+        print('\n\n', ee, '\n\n')
+        print('\n\n', type(ee), '\n\n')
+
+        return render_template('homepage.html', b=ee)
+    else:
+        return render_template('front.html')
 
 @login_manager.user_loader
 @app.route('/login', methods=['GET', 'POST'])
@@ -237,7 +243,6 @@ def aboutus():
 def settings_page():
     if 'user' in session:
         try:
-            print('\n\n1111111111111\n\n')
             # PASSING ALL INFO TO DISPLAY
 
             dob = ''; e_mail = ''; inx = 0
@@ -247,12 +252,9 @@ def settings_page():
             udb = pd.read_csv('User.csv')
             wins = df2[df2['username'] == session['user']]['wins'].values[0]
             games = df2[df2['username'] == session['user']]['games'].values[0]
-            print('\n\n22222222222222222\n\n')
             for i in udb['User']:
                 if udb['User'].values[inx] == session['user']: e_mail = udb['Email'][inx];dob = udb['DOB'][inx]
                 else: inx += 1
-
-            print('\n\n33333333333333\n\n')
 
             # DOING THE ACTUAL CHANGES
 
@@ -276,14 +278,11 @@ def settings_page():
                                         settings_page()
                                         return render_template('settingspage.html')
                                     else:
-                                        df.replace(to_replace=df.User[inx], value=request.form.get('unameedit'),
-                                                   inplace=True)
+                                        df.loc[df["User"] == session['user'], "User"] = request.form.get('unameedit')
                                         df.to_csv('User.csv', index=False)
-                                        for j in ud.Username:
+                                        for j in ud.username:
                                             if j == session['user']:
-                                                ud.replace(to_replace=ud.Username[inx],
-                                                           value=request.form.get('unameedit'),
-                                                           inplace=True)
+                                                ud.loc[ud["username"] == session['user'], "username"] = request.form.get('unameedit')
                                                 ud.to_csv('db.csv', index=False)
                                                 os.rename('static/pfps/' + session['user'] + '.png',
                                                           'static/pfps/' + request.form.get('unameedit') + '.png')
@@ -317,7 +316,7 @@ def settings_page():
                                 return render_template('settingspage.html')
                     else:
                         inx += 1
-                return render_template('homepage.html')
+                return front()
 
             return render_template('settingspage.html', w=wins, g=games, u=session['user'], e=e_mail, d=dob)
         except Exception:
@@ -386,8 +385,7 @@ def play():
 def room(roomlink):
     global in_code,Question, q_answer, userl, a
     if 'user' in session:
-        index = 0;
-        df = pd.read_csv('questions.csv'); udb = pd.read_csv('db.csv')
+        index = 0; df = pd.read_csv('questions.csv'); udb = pd.read_csv('db.csv')
         for i in room_links:
             if i[0] == roomlink:
 
@@ -424,7 +422,7 @@ print('YOUR ANSWER')
                                     b = []
                                     input1 = (df['Inputs'][qinx])
                                     exec(df['Answers'][qinx])
-                                    q_answer='\n'+'\n'.join(b)
+                                    q_answer = '\n'+'\n'.join(b)
                                 else:
                                     q_answer = df['Answers'][qinx]
 
