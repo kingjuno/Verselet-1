@@ -42,7 +42,16 @@ def page_not_found(e):
 @login_manager.user_loader
 @app.route('/', methods=['GET', 'POST'])
 def front():
-    global q, in_code,Question, usl
+    global q, in_code, Question, usl
+
+    usdb = pd.read_csv('db.csv'); pi = 0; usl = ''
+    for i in usdb.username.values:
+        if i == session['user']:
+            usl = usdb['current'][pi]
+            break
+        else:
+            pi += 1
+
     usdb = pd.read_csv('db.csv'); pi = 0; ee = ''; ei = 0; return_link = ''
     if 'user' in session:
 
@@ -104,7 +113,8 @@ def front():
                                     for i in usdb.username.values:
                                         if i == session['user']:
                                             usdb.loc[usdb["username"] == session['user'], "games"] += 1
-                                            usdb.loc[usdb["username"] == session['user'], "current"] = search_link
+                                            usdb.loc[usdb["username"] == session['user'], "current"] = 'Rejoin your game'
+                                            usdb.loc[usdb["username"] == session['user'], "link"] = request.form.get('join')
                                             usdb.to_csv('db.csv', index=False)
                                             break
                                     userl.append(session['user'])
@@ -357,7 +367,6 @@ def contactus():
                     mail.sendmail(from_add, to_add, text)
                     mail.quit()
 
-                    print('sent')
                     return redirect(url_for('front'))
 
                 else:
@@ -451,7 +460,7 @@ print('YOUR ANSWER')
                             return render_template('compiler.html', r=result, c=in_code, q=f'Result : True' if not a else 'Result : False', que=room_links[index][1], link=roomlink, z=f"Expected : {q_answer}")
 
                     elif request.form['btnc'] == 'submit':
-                        udb.loc[udb["username"] == session['user'], "current"] = ''
+                        udb.loc[udb["username"] == session['user'], "current"] = 'Create a game'
                         if is_correct:
                             answer = "Correct"
                         else:
@@ -468,6 +477,17 @@ print('YOUR ANSWER')
                             indexs += 1
 
                         return render_template('result.html', username=username, status=status, answer=answer, index=indexs, userlist=userl)
+
+                    elif request.form['btnc'] == 'leave':
+                        usdb = pd.read_csv('db.csv')
+                        print(usdb.loc[usdb["username"] == session['user'], "current"])
+                        usdb.loc[usdb["username"] == session['user'], "current"] = 'Create a game'
+                        print(usdb.loc[usdb["username"] == session['user'], "current"])
+                        usdb.loc[udb["username"] == session['user'], "link"] = ''
+
+                        usdb.to_csv('db.csv')
+
+                        return redirect(url_for('front'))
 
                 return render_template('compiler.html', u=session['user'], que=room_links[index][1], link=roomlink, c=in_code)
             else:
