@@ -476,8 +476,6 @@ print('YOUR ANSWER')
 
                         usdb.loc[usdb["username"] == session['user'], "current"] = 'Create a game'
                         usdb.loc[udb["username"] == session['user'], "link"] = ''
-                        if room.n <= 0:
-                            close(roomlink)
 
                         usdb.to_csv('db.csv', index=False)
 
