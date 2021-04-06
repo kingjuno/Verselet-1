@@ -153,7 +153,8 @@ def login():
                     if hashpass(password) == df['Pass'][log_inx]:
                         session['user'] = user
                         return redirect(url_for('front'))
-                else: log_inx += 1
+                else:
+                    log_inx += 1
             else:
                 flash('Incorrect username or password')
                 return render_template("login.html")
@@ -211,10 +212,12 @@ def user_profile():
         doby = dob[0:4]
         if dob[5] == '0':
             dobm = month[int(dob[6])]
-        else: dobm = month[int(dob[5:6])]
+        else:
+            dobm = month[int(dob[5:6])]
         if dob[8] == '0':
             dobd = dob[9]
-        else: dobd = dob[8:9]
+        else:
+            dobd = dob[8:9]
 
         return render_template('profile.html', w=wins, pfp=pfp, g=games, u=session['user'], e=e_mail, d=dobd, m=dobm, y=doby)
     else:
@@ -418,7 +421,8 @@ print('YOUR ANSWER')
                                     q_answer = df['Answers'][qinx]
 
                                 break
-                            else: qinx += 1
+                            else:
+                                qinx += 1
 
                         in_code = request.form.get('input')
                         lang = 'Python3'
@@ -436,9 +440,10 @@ print('YOUR ANSWER')
                             return render_template('compiler.html', e=errors, c=in_code, que=room_links[index][1], link=roomlink, q=f'Result : {result == q_answer}' if result else '')
                         else:
                             if a != []:
-                                pass
-                            else: is_correct = True
-                            return render_template('compiler.html', r=result, c=in_code, q=f'Result : True' if not a else 'Result : False', que=room_links[index][1], link=roomlink, z=f"Expected : {q_answer}")
+                                is_correct = False
+                            else:
+                                is_correct = True
+                            return render_template('compiler.html', r=result, c=in_code, q=f'Result : True' if is_correct else 'Result : False', que=room_links[index][1], link=roomlink, z=f"Expected : {q_answer}")
 
                     elif request.form['btnc'] == 'submit':
                         udb.loc[udb["username"] == session['user'], "current"] = 'Create a game'
@@ -472,7 +477,8 @@ print('YOUR ANSWER')
                                     roomdb.drop(roomi, axis=0, inplace=True)
                                     roomdb.to_csv('rooms.csv', index=False)
                                     close_room(roomlink)
-                            else: roomi += 1
+                            else:
+                                roomi += 1
 
                         usdb.loc[usdb["username"] == session['user'], "current"] = 'Create a game'
                         usdb.loc[udb["username"] == session['user'], "link"] = ''
@@ -486,7 +492,8 @@ print('YOUR ANSWER')
                 index += 1
         else:
             return render_template('404.html')
-    else: pass
+    else:
+        pass
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
